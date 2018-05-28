@@ -1,13 +1,13 @@
 #include <iostream>
+#include <cerrno>
 #include <termios.h>
-#include <unistd.h>
-#include <errno.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 /*
  * socat -d -d pty,raw,echo=0 pty,raw,echo=0
  */
-const char* device = "/dev/pts/21";
+const char* device = "/dev/pts/2";
 
 int main() {
     termios term_conf;
@@ -29,16 +29,16 @@ int main() {
         return -1;
     }
 
-    term_conf.c_iflag &= ~(IGNBRK | BRKINT | ICRNL | INLCR | PARMRK | INPCK | ISTRIP | IXON);
-    term_conf.c_oflag = 0;
-    term_conf.c_lflag &= ~(ECHO | ECHONL | ICANON | IEXTEN | ISIG);
-    term_conf.c_cflag &= ~(CSIZE | PARENB);
-    term_conf.c_cflag |= CS8;
+    //term_conf.c_iflag &= ~(IGNBRK | BRKINT | ICRNL | INLCR | PARMRK | INPCK | ISTRIP | IXON);
+    term_conf.c_oflag &= ~OPOST;
+    term_conf.c_lflag &= ~(ECHO | ECHONL | ECHOE | ICANON | IEXTEN | ISIG);
+    //term_conf.c_cflag &= ~(CSIZE | CSTOPB | PARENB);
+    term_conf.c_cflag |= CLOCAL | CREAD | CS8;
 
     term_conf.c_cc[VMIN] = 1;
-    term_conf.c_cc[VTIME] = 1;
+    term_conf.c_cc[VTIME] = 0;
 
-    if (cfsetispeed(&term_conf, B9600) < 0 || cfsetospeed(&term_conf, B9600) < 0) {
+    if (cfsetispeed(&term_conf, B38400) < 0 || cfsetospeed(&term_conf, B38400) < 0) {
         std::cout << "Can't set serial input/output speed" << std::endl;
         return -1;
     }
@@ -48,18 +48,20 @@ int main() {
         return -1;
     }
 
+    //fcntl(serial_descriptor, F_SETFL, 0);
+
     std::cout << "Success!" << std::endl;
 
-    unsigned char status = 'K';
 
-    while (status != 'Q') {
+    write(serial_descriptor, "ATZ\r", 4);
+
+    unsigned char status = 'K';
+    while (true) {
         if (read(serial_descriptor, &status, 1) > 0) {
             write(STDOUT_FILENO, &status, 1);
-            std::cout << status << std::endl;
-        }
-
-        if (read(STDIN_FILENO, &status, 1) > 0) {
-            write(serial_descriptor, &status, 1);
+            if (status == 'Q') {
+                break;
+            }
         }
     }
 
