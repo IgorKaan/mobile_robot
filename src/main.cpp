@@ -31,7 +31,7 @@ int main() {
 
         serial.close_port();
     } catch (std::runtime_error& e) {
-        std::cout << e.what() << std::endl;
+        std::cout << "Runtime error: " << e.what() << std::endl;
     }
 
     return 0;

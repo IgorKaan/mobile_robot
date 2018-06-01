@@ -75,6 +75,9 @@ int linux_serial::read_port(void* packets, const int count) {
 }
 
 void linux_serial::set_device_name(const char* device_name) {
+    if (m_port_fd != -1) {
+        throw std::runtime_error{"Can set device name only after closing the port"};
+    }
     m_port_device_name = const_cast<char*>(device_name);
 }
 
@@ -83,6 +86,9 @@ char *linux_serial::get_device_name() const {
 }
 
 void linux_serial::set_port_baud_rate(speed_t baud_rate) {
+    if (m_port_fd != -1) {
+        throw std::runtime_error{"Can set port baud rate only after closing the port"};
+    }
     m_port_baud_rate = baud_rate;
 }
 
