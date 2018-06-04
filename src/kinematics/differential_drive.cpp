@@ -25,7 +25,7 @@ differential_drive::pose_with_twist differential_drive::forward_kinematics(
     if (std::fabs(left_vel - right_vel) < 0.001f) {
         // Forward linear motion
         twist.vx = std::cos(theta) * velocity_base;
-        twist.vy = std::cos(theta) * velocity_base;
+        twist.vy = std::sin(theta) * velocity_base;
         twist.omega = 0.0f;
 
         new_pose.set_x(x + twist.vx * dt);
@@ -43,8 +43,7 @@ differential_drive::pose_with_twist differential_drive::forward_kinematics(
 
         float new_x = std::cos(dw) * (x - ICC_x) - std::sin(dw) * (y - ICC_y) + ICC_x;
         float new_y = std::sin(dw) * (x - ICC_x) + std::cos(dw) * (y - ICC_y) + ICC_y;
-
-        new_pose.set_theta(theta);
+        
         new_pose.set_x(new_x);
         new_pose.set_y(new_y);
         new_pose.set_theta(theta);
