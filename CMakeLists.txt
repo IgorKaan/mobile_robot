@@ -25,7 +25,7 @@ set(SRC_NO_MAIN
         src/linux_serial.cpp
         include/kinematics/differential_drive.h
         src/kinematics/differential_drive.cpp
-        include/kinematics/pose2d.h src/nodes/test_node.cpp)
+        include/kinematics/pose2d.h)
 
 set(LINK_LIBRARIES
         ${CMAKE_THREAD_LIBS_INIT})
