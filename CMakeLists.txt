@@ -20,22 +20,22 @@ find_package(catkin QUIET COMPONENTS
 
 include_directories(include/)
 
-set(SRC_NO_MAIN
+set(LIB_SRC
         include/linux_serial.h
         src/linux_serial.cpp
         include/kinematics/differential_drive.h
         src/kinematics/differential_drive.cpp
         include/kinematics/pose2d.h)
 
-set(LINK_LIBRARIES
+set(LIB_LINK_LIBRARIES
         ${CMAKE_THREAD_LIBS_INIT})
 
-set(INLCUDE_DIRECTORIES
+set(LIB_INLCUDE_DIRECTORIES
         )
 
-add_library(mob_comms_lib ${SRC_NO_MAIN})
-target_link_libraries(mob_comms_lib ${LINK_LIBRARIES})
-target_include_directories(mob_comms_lib PUBLIC ${INCLUDE_DIRECTORIES})
+add_library(mob_comms_lib ${LIB_SRC})
+target_link_libraries(mob_comms_lib ${LIB_LINK_LIBRARIES})
+target_include_directories(mob_comms_lib PUBLIC ${LIB_INCLUDE_DIRECTORIES})
 
 add_executable(mob_comms src/main.cpp)
 target_link_libraries(mob_comms mob_comms_lib)
@@ -71,6 +71,6 @@ if (${roscpp_FOUND})
                 mob_comms_lib
                 ${catkin_LIBRARIES})
 
-        MESSAGE(STATUS "Generating node" node_name)
+        MESSAGE(STATUS "Generating ROS node " ${node_name})
     endforeach(ros_node_src)
 endif()
