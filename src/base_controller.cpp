@@ -1,11 +1,11 @@
 #include "base_controller.h"
 
 
-base_controller::base_controller(std::string pub_topic, std::string sub_topic, differential_drive::parameters robot_params)
+base_controller::base_controller(std::string rpm_topic, std::string vel_topic, differential_drive::parameters robot_params)
         : m_robot_params(robot_params)
 {
-    sub = n.subscribe("cmd_vel", 16, &base_controller::twist_cb, this);
-    pub = n.advertise<std_msgs::Int16MultiArray>("cmd_rpm", 100);
+    sub = n.subscribe(vel_topic, 16, &base_controller::twist_cb, this);
+    pub = n.advertise<std_msgs::Int16MultiArray>(rpm_topic, 100);
 }
 
 void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)

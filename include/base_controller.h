@@ -10,7 +10,7 @@
 class base_controller
 {
 public:
-    base_controller(std::string pub_topic, std::string sub_topic, differential_drive::parameters robot_params);
+    base_controller(std::string rpm_topic, std::string vel_topic, differential_drive::parameters robot_params);
 
     void twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg);
 private:
