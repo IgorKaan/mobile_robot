@@ -10,7 +10,14 @@ int main(int argc, char** argv)
     try {
         ros::init(argc, argv, "test_node_listener");
 
-        base_controller controller("cmd_rpm", "cmd_vel");
+        float L = 0.28;
+        float R = 0.06;
+
+        differential_drive::parameters params;
+        params.axis_length = L;
+        params.wheel_radius = R;
+
+        base_controller controller("cmd_rpm", "cmd_vel", params);
 
         ros::Rate rate(30);
         ROS_INFO("Sub: cmd_vel, pub: cmd_rpm");

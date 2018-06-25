@@ -1,7 +1,8 @@
 #include "base_controller.h"
 
 
-base_controller::base_controller(std::string pub_topic, std::string sub_topic)
+base_controller::base_controller(std::string pub_topic, std::string sub_topic, differential_drive::parameters robot_params)
+        : m_robot_params(robot_params)
 {
     sub = n.subscribe("cmd_vel", 16, &base_controller::twist_cb, this);
     pub = n.advertise<std_msgs::Int16MultiArray>("cmd_rpm", 100);
@@ -27,8 +28,8 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     arr_msg.layout.dim[0].stride = 2;
 
     float v_mag = sqrt(vx*vx + vy*vy + vz*vz);
-    float L = 0.28;
-    float R = 0.06;
+    float L = m_robot_params.axis_length;
+    float R = m_robot_params.wheel_radius;
 
     std::cout << v_mag << ", " << az << std::endl;
 
