@@ -38,7 +38,7 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     if (left_rpm > 30) {
         left_rpm = 30;
     } else if (left_rpm < -30) {
-        left_rpm = 30;
+        left_rpm = -30;
     }
 
     if (right_rpm > 30) {
