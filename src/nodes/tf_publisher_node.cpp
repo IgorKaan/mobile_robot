@@ -3,7 +3,7 @@
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "tf_publisher");
+    ros::init(argc, argv, "tf_publisher_node");
     ros::NodeHandle n;
 
     ros::Rate r(100);

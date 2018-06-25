@@ -8,7 +8,7 @@
 int main(int argc, char** argv)
 {
     try {
-        ros::init(argc, argv, "test_node_listener");
+        ros::init(argc, argv, "base_controller_node");
 
         float L = 0.28;
         float R = 0.06;
