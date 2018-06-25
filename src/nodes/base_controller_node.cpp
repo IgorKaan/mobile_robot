@@ -41,6 +41,7 @@ public:
         std::cout << v_mag << ", " << az << std::endl;
 
         v_mag /=  10.0f;
+        az /= 1.5f;
 
         int right_rpm = (2*v_mag + az * L) / (2 * R);
         int left_rpm = (2*v_mag - az * L) / (2 * R);
