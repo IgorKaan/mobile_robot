@@ -30,7 +30,8 @@ set(LIB_SRC
         include/kinematics/pose2d.h
         include/base_controller.h
         src/base_controller.cpp
-        )
+        include/odometry_publisher.h
+        src/odometry_publisher.cpp)
 
 set(LIB_LINK_LIBRARIES
         ${CMAKE_THREAD_LIBS_INIT}
