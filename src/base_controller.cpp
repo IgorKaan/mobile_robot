@@ -27,24 +27,24 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     arr_msg.layout.dim[0].size = 2;
     arr_msg.layout.dim[0].stride = 2;
 
-    float v_mag = sqrt(vx*vx + vy*vy + vz*vz);
     float L = m_robot_params.axis_length;
     float R = m_robot_params.wheel_radius;
 
-    std::cout << v_mag << ", " << az << std::endl;
+    std::cout << vx << ", " << az << std::endl;
 
-    v_mag /=  10.0f;
-    az /= 1.5f;
-
-    int right_rpm = (2*v_mag + az * L) / (2 * R);
-    int left_rpm = (2*v_mag - az * L) / (2 * R);
+    int right_rpm = (2*vx + az * L) / (2.0f * R);
+    int left_rpm = (2*vx - az * L) / (2.0f * R);
 
     if (left_rpm > 30) {
+        left_rpm = 30;
+    } else if (left_rpm < -30) {
         left_rpm = 30;
     }
 
     if (right_rpm > 30) {
         right_rpm = 30;
+    } else if (right_rpm < -30) {
+        right_rpm = -30;
     }
 
     arr_msg.data.push_back(left_rpm);
