@@ -32,6 +32,8 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
 
     std::cout << vx << ", " << az << std::endl;
 
+    vx /= 10.0f;
+
     int right_rpm = (2*vx + az * L) / (2.0f * R);
     int left_rpm = (2*vx - az * L) / (2.0f * R);
 

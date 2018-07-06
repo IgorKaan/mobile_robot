@@ -51,7 +51,7 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
     odom_msg.pose.pose.orientation = orient_quat;
 
     odom_msg.twist.twist.linear.x = twist.vx;
-    odom_msg.twist.twist.linear.y = twist.vy;
+    odom_msg.twist.twist.linear.y = 0.0f;
     odom_msg.twist.twist.angular.z = twist.omega;
 
     odom_pub.publish(odom_msg);

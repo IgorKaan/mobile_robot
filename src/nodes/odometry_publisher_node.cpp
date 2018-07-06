@@ -16,8 +16,7 @@ int main(int argc, char** argv)
 
     odometry_publisher odo_pub("cmd_rpm", "odom", params);
 
-    ros::Rate rate(100);
-
+    ros::Rate rate(30);
     while (ros::ok()) {
         ros::spinOnce();
         rate.sleep();

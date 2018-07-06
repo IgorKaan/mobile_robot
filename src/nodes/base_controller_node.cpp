@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 
         base_controller controller("cmd_rpm", "cmd_vel", params);
 
-        ros::Rate rate(30);
+        ros::Rate rate(10);
         ROS_INFO("Sub: cmd_vel, pub: cmd_rpm");
         while (ros::ok()) {
             ros::spinOnce();
