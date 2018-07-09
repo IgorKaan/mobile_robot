@@ -3,8 +3,8 @@
 odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_topic, differential_drive::parameters robot_params)
         : m_pose(0.0f, 0.0f, 0.0f), m_robot_params(robot_params)
 {
-    rpm_sub = n.subscribe(rpm_topic, 16, &odometry_publisher::odometry_cb, this);
-    odom_pub = n.advertise<nav_msgs::Odometry>(odom_topic, 100);
+    rpm_sub = n.subscribe(rpm_topic, 10, &odometry_publisher::odometry_cb, this);
+    odom_pub = n.advertise<nav_msgs::Odometry>(odom_topic, 10);
 }
 
 void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &rpm_msg)
@@ -15,8 +15,8 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
     int left_rpm = rpm_msg->data[0];
     int right_rpm = rpm_msg->data[1];
 
-    float left_omega = (M_2_PI / 60) * left_rpm;
-    float right_omega = (M_2_PI / 60) * right_rpm;
+    float left_omega = (M_2_PI / 60.0f) * left_rpm;
+    float right_omega = (M_2_PI / 60.0f) * right_rpm;
 
     differential_drive::pose_with_twist pose_twist = differential_drive::forward_kinematics(m_pose, m_robot_params,
                                                                                           left_omega, right_omega, dt);

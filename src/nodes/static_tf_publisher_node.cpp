@@ -1,9 +1,10 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 
+
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "tf_publisher_node");
+    ros::init(argc, argv, "static_tf_publisher_node");
     ros::NodeHandle n;
 
     ros::Rate r(100);
@@ -13,8 +14,8 @@ int main(int argc, char** argv)
     while (n.ok()) {
         broadcaster.sendTransform(
                 tf::StampedTransform(
-                        tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0, 0, 0)),
-                        ros::Time::now(), "base_link", "odom"));
+                        tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0, 0, 0.5f)),
+                        ros::Time::now(), "base_link", "laser_link"));
 
         r.sleep();
     }
