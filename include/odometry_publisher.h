@@ -6,6 +6,7 @@
 #include <std_msgs/Int16MultiArray.h>
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
+#include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Quaternion.h>
 
 #include "kinematics/pose2d.h"
@@ -22,6 +23,7 @@ private:
     ros::Publisher odom_pub;
     tf::TransformBroadcaster odom_broadcaster;
 
+    float left_rpm_old, right_rpm_old;
     pose2d m_pose;
     differential_drive::parameters m_robot_params;
     ros::Time prev_time;

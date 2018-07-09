@@ -22,7 +22,10 @@ differential_drive::pose_with_twist differential_drive::forward_kinematics(
     // robot_frame_vel_y = 0
     float velocity_base = 0.5f * (right_vel + left_vel);
 
-    if (std::fabs(left_vel - right_vel) < 0.001f) {
+    int left_sign = left_vel >= 0 ? 1 : -1;
+    int right_sign = right_vel >=0 ? 1 : -1;
+
+    if (std::fabs(left_vel - right_vel) < 0.001f && (left_sign == right_sign)) {
         // Forward linear motion
         new_pose.set_x(x + std::cos(theta)*velocity_base * dt);
         new_pose.set_y(y + std::sin(theta)*velocity_base * dt);
@@ -31,15 +34,25 @@ differential_drive::pose_with_twist differential_drive::forward_kinematics(
         twist.vx = velocity_base;
         twist.vy = 0.0f;
         twist.omega = 0.0f;
+    } else if (std::fabs(left_vel + right_vel) < 0.001f && (left_sign != right_sign)) {
+        // same x
+        new_pose.set_x(x);
+        // same y
+        new_pose.set_y(y);
+        //
+        new_pose.set_theta(theta);
+        new_pose.set_theta(new_pose.get_theta() + (2.0f*right_vel*dt) / params.axis_length);
+
+        twist.omega = (right_vel - left_vel) / params.axis_length;
     } else {
         // R from ICC to pose
-        float curve_R = (params.axis_length / 2.0f) * (left_vel + right_vel) / (right_vel - left_vel);
+        float curve_R = (params.axis_length / 2.0f) * ((left_vel + right_vel) / (right_vel - left_vel));
         // angular velocity about ICC
         float omega = (right_vel - left_vel) / params.axis_length;
         float dtheta = omega * dt;
 
         float ICC_x = x - curve_R * std::sin(theta);
-        float ICC_y = y - curve_R * std::cos(theta);
+        float ICC_y = y + curve_R * std::cos(theta);
 
         float new_x = std::cos(dtheta) * (x - ICC_x) - std::sin(dtheta) * (y - ICC_y) + ICC_x;
         float new_y = std::sin(dtheta) * (x - ICC_x) + std::cos(dtheta) * (y - ICC_y) + ICC_y;

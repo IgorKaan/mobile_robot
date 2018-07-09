@@ -1,7 +1,8 @@
 #include "odometry_publisher.h"
 
 odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_topic, differential_drive::parameters robot_params)
-        : m_pose(0.0f, 0.0f, 0.0f), m_robot_params(robot_params)
+        : m_pose(0.0f, 0.0f, 0.0f), m_robot_params(robot_params),
+          left_rpm_old(0.0f), right_rpm_old(0.0f)
 {
     rpm_sub = n.subscribe(rpm_topic, 10, &odometry_publisher::odometry_cb, this);
     odom_pub = n.advertise<nav_msgs::Odometry>(odom_topic, 10);
@@ -12,8 +13,10 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
     ros::Time current_time = ros::Time::now();
     float dt = (current_time - prev_time).toSec();
 
-    int left_rpm = rpm_msg->data[0];
-    int right_rpm = rpm_msg->data[1];
+    float left_rpm = (left_rpm_old + rpm_msg->data[0]) / 2.0f;
+    float right_rpm = (right_rpm_old + rpm_msg->data[1]) / 2.0f;
+    left_rpm_old = rpm_msg->data[0];
+    right_rpm_old = rpm_msg->data[1];
 
     float left_omega = (M_2_PI / 60.0f) * left_rpm;
     float right_omega = (M_2_PI / 60.0f) * right_rpm;
@@ -24,7 +27,7 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
     pose2d new_pose = pose_twist.pose;
     differential_drive::twist2d twist = pose_twist.twist;
 
-    ROS_INFO("%d %d %f %f", left_rpm, right_rpm, left_omega, right_omega);
+    ROS_INFO("%f %f %f %f", left_rpm, right_rpm, left_omega, right_omega);
 
     m_pose = new_pose;
 
@@ -46,10 +49,12 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
     odom_msg.header.frame_id = "odom";
     odom_msg.child_frame_id = "base_link";
 
+    // Pose in frame_id
     odom_msg.pose.pose.position.x = new_pose.get_x();
     odom_msg.pose.pose.position.y = new_pose.get_y();
     odom_msg.pose.pose.orientation = orient_quat;
 
+    // Twist in child_frame_id
     odom_msg.twist.twist.linear.x = twist.vx;
     odom_msg.twist.twist.linear.y = 0.0f;
     odom_msg.twist.twist.angular.z = twist.omega;

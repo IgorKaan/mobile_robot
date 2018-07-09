@@ -14,7 +14,7 @@ int main(int argc, char** argv)
     params.axis_length = L;
     params.wheel_radius = R;
 
-    odometry_publisher odo_pub("cmd_rpm", "odom", params);
+    odometry_publisher odo_pub("rpm_data", "odom", params);
 
     ros::Rate rate(30);
     while (ros::ok()) {
