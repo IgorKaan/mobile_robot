@@ -37,6 +37,7 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     int right_rpm = (2*vx + az * L) / (2.0f * R);
     int left_rpm = (2*vx - az * L) / (2.0f * R);
 
+    /*
     if (left_rpm > 30) {
         left_rpm = 30;
     } else if (left_rpm < -30) {
@@ -48,6 +49,7 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     } else if (right_rpm < -30) {
         right_rpm = -30;
     }
+    */
 
     arr_msg.data.push_back(left_rpm);
     arr_msg.data.push_back(right_rpm);

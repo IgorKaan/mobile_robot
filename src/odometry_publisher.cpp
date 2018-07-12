@@ -1,8 +1,9 @@
 #include "odometry_publisher.h"
 
-odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_topic, differential_drive::parameters robot_params)
+odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_topic, differential_drive::parameters robot_params,
+                                       bool use_ticks)
         : m_pose(0.0f, 0.0f, 0.0f), m_robot_params(robot_params),
-          left_rpm_old(0.0f), right_rpm_old(0.0f)
+          m_left_rpm_old(0.0f), m_right_rpm_old(0.0f), m_ticks(use_ticks)
 {
     rpm_sub = n.subscribe(rpm_topic, 10, &odometry_publisher::odometry_cb, this);
     odom_pub = n.advertise<nav_msgs::Odometry>(odom_topic, 10);
@@ -13,25 +14,41 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
     ros::Time current_time = ros::Time::now();
     float dt = (current_time - prev_time).toSec();
 
-    float left_rpm = (left_rpm_old + rpm_msg->data[0]) / 2.0f;
-    float right_rpm = (right_rpm_old + rpm_msg->data[1]) / 2.0f;
-    left_rpm_old = rpm_msg->data[0];
-    right_rpm_old = rpm_msg->data[1];
 
-    float left_omega = (M_2_PI / 60.0f) * left_rpm;
-    float right_omega = (M_2_PI / 60.0f) * right_rpm;
+    pose2d new_pose;
+    differential_drive::twist2d twist;
+    if (m_ticks) {
+        differential_drive::wheel_ticks ticks;
+        ticks.left_ticks = rpm_msg->data[0];
+        ticks.right_ticks = rpm_msg->data[1];
 
-    differential_drive::pose_with_twist pose_twist = differential_drive::forward_kinematics(m_pose, m_robot_params,
-                                                                                          left_omega, right_omega, dt);
+        differential_drive::pose_with_twist pose_twist = differential_drive::forward_kinematics(m_pose, m_robot_params, ticks, dt);
+        new_pose = pose_twist.pose;
+        twist = pose_twist.twist;
+        ROS_INFO("TICKS %f %f %f %f %f %f", ticks.left_ticks, ticks.right_ticks,
+                 new_pose.get_x(), new_pose.get_y(), new_pose.get_theta(), dt);
+    } else {
 
-    pose2d new_pose = pose_twist.pose;
-    differential_drive::twist2d twist = pose_twist.twist;
+        float left_rpm = (m_left_rpm_old + rpm_msg->data[0]) / 2.0f;
+        float right_rpm = (m_right_rpm_old + rpm_msg->data[1]) / 2.0f;
+        m_left_rpm_old = rpm_msg->data[0];
+        m_right_rpm_old = rpm_msg->data[1];
 
-    ROS_INFO("%f %f %f %f", left_rpm, right_rpm, left_omega, right_omega);
+        differential_drive::wheel_vels vels;
+        vels.left_omega = (M_2_PI / 60.0f) * left_rpm;
+        vels.right_omega = (M_2_PI / 60.0f) * right_rpm;
+
+        differential_drive::pose_with_twist pose_twist = differential_drive::forward_kinematics(m_pose, m_robot_params, vels, dt);
+        new_pose = pose_twist.pose;
+        twist = pose_twist.twist;
+        ROS_INFO("VELS %f %f %f %f %f %f %f", left_rpm, right_rpm,
+                 new_pose.get_x(), new_pose.get_y(), new_pose.get_theta(), dt, (1.0/dt));
+    }
 
     m_pose = new_pose;
 
-    geometry_msgs::Quaternion orient_quat = tf::createQuaternionMsgFromYaw(new_pose.get_theta());
+    float yaw = new_pose.get_theta() * 10.0f;
+    geometry_msgs::Quaternion orient_quat = tf::createQuaternionMsgFromYaw(yaw);
 
     geometry_msgs::TransformStamped odom_transform;
     odom_transform.header.stamp = current_time;

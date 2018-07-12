@@ -3,7 +3,7 @@
 
 differential_drive::pose_with_twist differential_drive::forward_kinematics(
         pose2d pose, differential_drive::parameters params,
-        float left_omega, float right_omega, float dt)
+        wheel_vels vels, float dt)
 {
     pose_with_twist result;
 
@@ -14,8 +14,8 @@ differential_drive::pose_with_twist differential_drive::forward_kinematics(
 
     // wheel velocities
     // omega is in rad/s
-    float left_vel = left_omega * params.wheel_radius;
-    float right_vel = right_omega * params.wheel_radius;
+    float left_vel = vels.left_omega * params.wheel_radius;
+    float right_vel = vels.right_omega * params.wheel_radius;
 
     // Velocity in robot frame (x axis - forward)
     // robot_frame_vel_x = velocity_base
@@ -67,6 +67,79 @@ differential_drive::pose_with_twist differential_drive::forward_kinematics(
         twist.vx = velocity_base;
         twist.vy = 0.0f;
         twist.omega = omega;
+    }
+
+    result.pose = new_pose;
+    result.twist = twist;
+
+    return result;
+}
+
+differential_drive::pose_with_twist
+differential_drive::forward_kinematics(pose2d pose, differential_drive::parameters params,
+                                       differential_drive::wheel_ticks ticks, float dt)
+{
+    pose_with_twist result;
+
+    pose2d new_pose;
+    twist2d twist;
+
+    float x = pose.get_x(), y = pose.get_y(), theta = pose.get_theta();
+
+    // wheel velocities
+    // omega is in rad/s
+    // Velocity in robot frame (x axis - forward)
+    // robot_frame_vel_x = velocity_base
+    // robot_frame_vel_y = 0
+
+    float vel_left = ticks.left_ticks / dt;
+    float vel_right = ticks.right_ticks / dt;
+    float velocity_base = 0.5f * (vel_right + vel_left);
+
+    int left_sign = vel_left >= 0 ? 1 : -1;
+    int right_sign = vel_right >=0 ? 1 : -1;
+
+    if (std::fabs(vel_left - vel_right) < 0.001f && (left_sign == right_sign)) {
+        // Forward linear motion
+        new_pose.set_x(x + std::cos(theta)*velocity_base * dt);
+        new_pose.set_y(y + std::sin(theta)*velocity_base * dt);
+        new_pose.set_theta(theta);
+
+        twist.vx = velocity_base;
+        twist.vy = 0.0f;
+        twist.omega = 0.0f;
+    } else if (std::fabs(vel_left + vel_right) < 0.001f && (left_sign != right_sign)) {
+        // same x
+        new_pose.set_x(x);
+        // same y
+        new_pose.set_y(y);
+        //
+        new_pose.set_theta(theta);
+        new_pose.set_theta(new_pose.get_theta() + (2.0f*vel_right*dt) / params.axis_length);
+
+        twist.omega = (vel_right - vel_left) / params.axis_length;
+    } else {
+        // R from ICC to pose
+        float curve_R = (params.axis_length / 2.0f) * ((ticks.left_ticks + ticks.right_ticks) / (ticks.right_ticks - ticks.left_ticks));
+        // angular velocity about ICC
+        float dtheta = (ticks.right_ticks - ticks.left_ticks) / params.axis_length;
+
+        float ICC_x = x - curve_R * std::sin(theta);
+        float ICC_y = y + curve_R * std::cos(theta);
+
+        float new_x = std::cos(dtheta) * (x - ICC_x) - std::sin(dtheta) * (y - ICC_y) + ICC_x;
+        float new_y = std::sin(dtheta) * (x - ICC_x) + std::cos(dtheta) * (y - ICC_y) + ICC_y;
+
+        new_pose.set_x(new_x);
+        new_pose.set_y(new_y);
+        new_pose.set_theta(theta);
+        // Angles are normalized
+        new_pose.set_theta(new_pose.get_theta() + dtheta);
+
+        // Twist is in robot frame
+        twist.vx = velocity_base;
+        twist.vy = 0.0f;
+        twist.omega = dtheta / dt;
     }
 
     result.pose = new_pose;
