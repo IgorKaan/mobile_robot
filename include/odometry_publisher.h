@@ -14,7 +14,7 @@
 
 class odometry_publisher {
 public:
-    odometry_publisher(std::string rpm_topic, std::string odom_topic, differential_drive::parameters robot_params);
+    odometry_publisher(std::string rpm_topic, std::string odom_topic);
 
     void odometry_cb(const std_msgs::Int16MultiArray::ConstPtr& rpm_msg);
 private:

@@ -17,7 +17,7 @@ int main(int argc, char** argv)
         params.axis_length = L;
         params.wheel_radius = R;
 
-        base_controller controller("cmd_rpm", "cmd_vel", params);
+        base_controller controller("/cmd_rpm", "/cmd_vel");
 
         ros::Rate rate(60.0f);
         ROS_INFO("Sub: cmd_vel, pub: cmd_rpm");

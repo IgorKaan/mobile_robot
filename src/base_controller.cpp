@@ -1,11 +1,21 @@
 #include "base_controller.h"
 
 
-base_controller::base_controller(std::string rpm_topic, std::string vel_topic, differential_drive::parameters robot_params)
-        : m_robot_params(robot_params)
+base_controller::base_controller(std::string rpm_topic, std::string vel_topic)
+    : n("base_controller")
 {
+    n.param<float>("axis_length", m_robot_params.axis_length, 0.30f);
+    n.param<float>("wheel_radius", m_robot_params.wheel_radius, 0.10f);
+    n.param<float>("ticks_rev", m_robot_params.ticks_rev, 60);
+
     sub = n.subscribe(vel_topic, 10, &base_controller::twist_cb, this);
     pub = n.advertise<std_msgs::Int16MultiArray>(rpm_topic, 10);
+
+    ROS_INFO("base_controller params: L: %f, R: %f, T/rev: %f",
+             m_robot_params.axis_length,
+             m_robot_params.wheel_radius,
+             m_robot_params.ticks_rev
+    );
 }
 
 void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
@@ -30,6 +40,8 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     float L = m_robot_params.axis_length;
     float R = m_robot_params.wheel_radius;
 
+    vx /= 10.0f;
+
     if (vx > 1.5f) {
         vx = 1.5f;
     } else if (vx < -1.5f) {
@@ -42,7 +54,7 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
         az = -10.0f;
     }
 
-    std::cout << vx << ", " << az << std::endl;
+    ROS_INFO("%f %f", vx, az);
 
     int right_rpm = (2*vx + az * L) / (2.0f * R);
     int left_rpm = (2*vx - az * L) / (2.0f * R);

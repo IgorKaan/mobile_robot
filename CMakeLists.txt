@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 find_package(Threads REQUIRED)
 find_package(catkin QUIET COMPONENTS
+        roslaunch
         roscpp
         std_msgs
         nav_msgs
@@ -19,6 +20,7 @@ find_package(catkin QUIET COMPONENTS
         message_filters
         tf
         )
+roslaunch_add_file_check(launch)
 
 include_directories(include/)
 

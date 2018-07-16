@@ -1,11 +1,21 @@
 #include "odometry_publisher.h"
 
-odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_topic, differential_drive::parameters robot_params)
-        : m_pose(0.0f, 0.0f, 0.0f), m_robot_params(robot_params),
+odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_topic)
+        : n("odometry_publisher"), m_pose(0.0f, 0.0f, 0.0f),
           m_left_rpm_old(0.0f), m_right_rpm_old(0.0f)
 {
+    n.param<float>("axis_length", m_robot_params.axis_length, 0.30f);
+    n.param<float>("wheel_radius", m_robot_params.wheel_radius, 0.10f);
+    n.param<float>("ticks_rev", m_robot_params.ticks_rev, 60);
+
     rpm_sub = n.subscribe(rpm_topic, 10, &odometry_publisher::odometry_cb, this);
     odom_pub = n.advertise<nav_msgs::Odometry>(odom_topic, 10);
+
+    ROS_INFO("odometry_publisher params: L: %f, R: %f, T/rev: %f",
+             m_robot_params.axis_length,
+             m_robot_params.wheel_radius,
+             m_robot_params.ticks_rev
+    );
 }
 
 void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &rpm_msg)
