@@ -10,8 +10,8 @@ int main(int argc, char** argv)
     try {
         ros::init(argc, argv, "base_controller_node");
 
-        float L = 0.28;
-        float R = 0.06;
+        float L = 0.28f;
+        float R = 0.06f;
 
         differential_drive::parameters params;
         params.axis_length = L;
@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 
         base_controller controller("cmd_rpm", "cmd_vel", params);
 
-        ros::Rate rate(10);
+        ros::Rate rate(60.0f);
         ROS_INFO("Sub: cmd_vel, pub: cmd_rpm");
         while (ros::ok()) {
             ros::spinOnce();

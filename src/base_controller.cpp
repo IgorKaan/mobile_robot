@@ -30,9 +30,19 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     float L = m_robot_params.axis_length;
     float R = m_robot_params.wheel_radius;
 
-    std::cout << vx << ", " << az << std::endl;
+    if (vx > 1.5f) {
+        vx = 1.5f;
+    } else if (vx < -1.5f) {
+        vx = -1.5f;
+    }
 
-    vx /= 10.0f;
+    if (az > 10.0f) {
+        az = 10.0f;
+    } else if (az < -10.0f) {
+        az = -10.0f;
+    }
+
+    std::cout << vx << ", " << az << std::endl;
 
     int right_rpm = (2*vx + az * L) / (2.0f * R);
     int left_rpm = (2*vx - az * L) / (2.0f * R);

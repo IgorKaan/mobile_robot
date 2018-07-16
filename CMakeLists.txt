@@ -23,8 +23,6 @@ find_package(catkin QUIET COMPONENTS
 include_directories(include/)
 
 set(LIB_SRC
-        include/linux_serial.h
-        src/linux_serial.cpp
         include/kinematics/differential_drive.h
         src/kinematics/differential_drive.cpp
         include/kinematics/pose2d.h

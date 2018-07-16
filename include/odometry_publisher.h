@@ -14,8 +14,7 @@
 
 class odometry_publisher {
 public:
-    odometry_publisher(std::string rpm_topic, std::string odom_topic, differential_drive::parameters robot_params,
-                           bool use_ticks);
+    odometry_publisher(std::string rpm_topic, std::string odom_topic, differential_drive::parameters robot_params);
 
     void odometry_cb(const std_msgs::Int16MultiArray::ConstPtr& rpm_msg);
 private:
@@ -26,10 +25,9 @@ private:
 
     float m_left_rpm_old {0.0f};
     float m_right_rpm_old {0.0f};
-    bool m_ticks {false};
     pose2d m_pose;
     differential_drive::parameters m_robot_params;
-    ros::Time prev_time;
+    ros::Time m_prev_time;
 };
 
 #endif //MOBILE_ROBOT_COMMS_ODOMETRY_PUBLISHER_H

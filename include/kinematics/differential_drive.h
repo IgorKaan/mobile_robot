@@ -19,11 +19,6 @@ public:
         float right_omega;
     };
 
-    struct wheel_ticks {
-        float left_ticks;
-        float right_ticks;
-    };
-
     struct twist2d {
         float vx;
         float vy;
@@ -36,7 +31,6 @@ public:
     };
 
     static pose_with_twist forward_kinematics(pose2d pose, parameters params, wheel_vels vels, float dt);
-    static pose_with_twist forward_kinematics(pose2d pose, parameters params, wheel_ticks ticks, float dt);
 private:
     differential_drive() = default;
 };

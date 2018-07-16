@@ -7,7 +7,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "static_tf_publisher_node");
     ros::NodeHandle n;
 
-    ros::Rate r(100);
+    ros::Rate r(60.0f);
 
     tf::TransformBroadcaster broadcaster;
 
