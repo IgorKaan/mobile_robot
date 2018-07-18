@@ -36,7 +36,13 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
     vels.left_omega = (M_2_PI / 60.0f) * left_rpm;
     vels.right_omega = (M_2_PI / 60.0f) * right_rpm;
 
-    differential_drive::pose_with_twist pose_twist = differential_drive::forward_kinematics(m_pose, m_robot_params, vels, dt);
+    differential_drive::pose_with_twist pose_twist = differential_drive::forward_kinematics(
+            m_pose,
+            m_robot_params,
+            vels,
+            dt
+    );
+
     new_pose = pose_twist.pose;
     twist = pose_twist.twist;
     ROS_INFO("%f %f %f %f %f %f %f", left_rpm, right_rpm,
@@ -44,8 +50,7 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
 
     m_pose = new_pose;
 
-    float rate = 10.0f;
-    float yaw = m_pose.get_theta() * rate;
+    float yaw = m_pose.get_theta();
     geometry_msgs::Quaternion orient_quat = tf::createQuaternionMsgFromYaw(yaw);
 
     geometry_msgs::TransformStamped odom_transform;
@@ -53,8 +58,8 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
     odom_transform.header.frame_id = "odom";
     odom_transform.child_frame_id = "base_link";
 
-    odom_transform.transform.translation.x = new_pose.get_x() * rate;
-    odom_transform.transform.translation.y = new_pose.get_y() * rate;
+    odom_transform.transform.translation.x = new_pose.get_x();
+    odom_transform.transform.translation.y = new_pose.get_y();
     odom_transform.transform.rotation = orient_quat;
 
     odom_broadcaster.sendTransform(odom_transform);
@@ -65,8 +70,8 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
     odom_msg.child_frame_id = "base_link";
 
     // Pose in frame_id
-    odom_msg.pose.pose.position.x = new_pose.get_x() * rate;
-    odom_msg.pose.pose.position.y = new_pose.get_y() * rate;
+    odom_msg.pose.pose.position.x = new_pose.get_x();
+    odom_msg.pose.pose.position.y = new_pose.get_y();
     odom_msg.pose.pose.orientation = orient_quat;
 
     // Twist in child_frame_id

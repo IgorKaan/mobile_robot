@@ -17,6 +17,17 @@ differential_drive::pose_with_twist differential_drive::forward_kinematics(
     float left_vel = vels.left_omega * params.wheel_radius;
     float right_vel = vels.right_omega * params.wheel_radius;
 
+    if (fabs(left_vel) < 0.0001f && fabs(right_vel) < 0.0001f) {
+        result.pose = pose;
+
+        twist.vx = 0.0f;
+        twist.vy = 0.0f;
+        twist.omega = 0.0f;
+        result.twist = twist;
+
+        return result;
+    }
+
     // wheel distances in meters
     float left_dist = left_vel * dt;
     float right_dist = right_vel * dt;
@@ -42,7 +53,6 @@ differential_drive::pose_with_twist differential_drive::forward_kinematics(
         float omega = (right_vel - left_vel) / params.axis_length;
         float dtheta = omega * dt;
 
-
         float ICC_x = x - curve_R * std::sin(theta);
         float ICC_y = y + curve_R * std::cos(theta);
 
@@ -58,7 +68,7 @@ differential_drive::pose_with_twist differential_drive::forward_kinematics(
         // Twist is in robot frame
         twist.vx = velocity_base;
         twist.vy = 0.0f;
-        twist.omega = omega * 10.0f;
+        twist.omega = omega;
     }
 
     result.pose = new_pose;
