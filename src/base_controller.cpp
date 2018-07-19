@@ -40,7 +40,8 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     float L = m_robot_params.axis_length;
     float R = m_robot_params.wheel_radius;
 
-    vx /= 10.0f;
+    vx /= 100.0f;
+    az /= 10.0f;
 
     if (vx > 1.5f) {
         vx = 1.5f;
@@ -53,23 +54,13 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     } else if (az < -10.0f) {
         az = -10.0f;
     }
-
-    ROS_INFO("%f %f", vx, az);
     
-    /*
-    float left_vel = (2*vx - az * L) / (2.0f * R);
-    float right_vel = (2*vx + az * L) / (2.0f * R);
-    
-    float left_omega = left_vel / R;
-    float right_omega = right_vel / R;
-    */
-    
-    float left_omega = vx - (az * (L / 2.0f));
-    float right_omega = vx + (az * (L / 2.0f));
+    float left_omega = (2*vx - az * L) / (2.0f * R);
+    float right_omega = (2*vx + az * L) / (2.0f * R);
 
-    int left_rpm = left_omega * (60.0f / M_2_PI);
-    int right_rpm = right_omega * (60.0f / M_2_PI);
-
+    int left_rpm = left_omega * (60.0f / (2.0f * M_PI));
+    int right_rpm = right_omega * (60.0f / (2.0f * M_PI));
+    
     if (left_rpm > 30) {
         left_rpm = 30;
     } else if (left_rpm < -30) {
@@ -81,7 +72,9 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     } else if (right_rpm < -30) {
         right_rpm = -30;
     }
-
+    
+    ROS_INFO("%f %f %f %f %d %d", vx, az, left_omega, right_omega, left_rpm, right_rpm);
+    
     arr_msg.data.push_back(left_rpm);
     arr_msg.data.push_back(right_rpm);
 

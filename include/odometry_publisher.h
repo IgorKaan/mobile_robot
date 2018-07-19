@@ -17,6 +17,7 @@ public:
     odometry_publisher(std::string rpm_topic, std::string odom_topic);
 
     void odometry_cb(const std_msgs::Int16MultiArray::ConstPtr& rpm_msg);
+    void update();
 private:
     ros::NodeHandle n;
     ros::Subscriber rpm_sub;
@@ -26,6 +27,7 @@ private:
     float m_left_rpm_old {0.0f};
     float m_right_rpm_old {0.0f};
     pose2d m_pose;
+    differential_drive::wheel_vels m_wheel_vels;
     differential_drive::parameters m_robot_params;
     ros::Time m_prev_time;
 };

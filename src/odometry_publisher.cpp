@@ -1,24 +1,39 @@
 #include "odometry_publisher.h"
 
 odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_topic)
-        : n("odometry_publisher"), m_pose(0.0f, 0.0f, 0.0f),
-          m_left_rpm_old(0.0f), m_right_rpm_old(0.0f)
+        : n("odometry_publisher"), m_pose(0.0f, 0.0f, 0.0f)
 {
     n.param<float>("axis_length", m_robot_params.axis_length, 0.30f);
     n.param<float>("wheel_radius", m_robot_params.wheel_radius, 0.10f);
     n.param<float>("ticks_rev", m_robot_params.ticks_rev, 60);
 
-    rpm_sub = n.subscribe(rpm_topic, 10, &odometry_publisher::odometry_cb, this);
-    odom_pub = n.advertise<nav_msgs::Odometry>(odom_topic, 10);
+    rpm_sub = n.subscribe(rpm_topic, 30, &odometry_publisher::odometry_cb, this);
+    odom_pub = n.advertise<nav_msgs::Odometry>(odom_topic, 30);
+    m_wheel_vels.left_omega = 0.0f;
+    m_wheel_vels.right_omega = 0.0f;
 
     ROS_INFO("odometry_publisher params: L: %f, R: %f, T/rev: %f",
              m_robot_params.axis_length,
              m_robot_params.wheel_radius,
              m_robot_params.ticks_rev
     );
+    
+    m_prev_time = ros::Time::now();
 }
 
-void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &rpm_msg)
+void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr& rpm_msg)
+{
+    float left_rpm = (m_left_rpm_old + rpm_msg->data[0]) / 2.0f;
+    float right_rpm = (m_right_rpm_old + rpm_msg->data[1]) / 2.0f;
+    m_left_rpm_old = rpm_msg->data[0];
+    m_right_rpm_old = rpm_msg->data[1];
+
+    // TODO: maybe lock?
+    m_wheel_vels.left_omega = ((2.0f*M_PI) / 60.0f) * left_rpm;
+    m_wheel_vels.right_omega = ((2.0f*M_PI) / 60.0f) * right_rpm;
+}
+
+void odometry_publisher::update()
 {
     ros::Time current_time = ros::Time::now();
     float dt = (current_time - m_prev_time).toSec();
@@ -26,23 +41,15 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
 
     pose2d new_pose;
     differential_drive::twist2d twist;
-
-    float left_rpm = (m_left_rpm_old + rpm_msg->data[0]) / 2.0f;
-    float right_rpm = (m_right_rpm_old + rpm_msg->data[1]) / 2.0f;
-    m_left_rpm_old = rpm_msg->data[0];
-    m_right_rpm_old = rpm_msg->data[1];
-
-    differential_drive::wheel_vels vels;
-    vels.left_omega = (M_2_PI / 60.0f) * left_rpm;
-    vels.right_omega = (M_2_PI / 60.0f) * right_rpm;
-
+    
     differential_drive::pose_with_twist pose_twist = differential_drive::forward_kinematics(m_pose, m_robot_params,
-                                                                                            vels, dt);
-
+                                                                                            m_wheel_vels, dt);
     new_pose = pose_twist.pose;
     twist = pose_twist.twist;
-    ROS_INFO("%f %f %f %f %f %f %f", left_rpm, right_rpm,
+    /*
+    ROS_INFO("%f %f %f %f %f %f %f", m_wheel_vels.left_omega, m_wheel_vels.right_omega,
              new_pose.get_x(), new_pose.get_y(), new_pose.get_theta(), dt);
+    */
 
     m_pose = new_pose;
 
@@ -76,5 +83,4 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
     odom_msg.twist.twist.angular.z = twist.omega;
 
     odom_pub.publish(odom_msg);
-
 }
