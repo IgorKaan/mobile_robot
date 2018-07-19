@@ -30,7 +30,7 @@ public:
         twist2d twist;
     };
 
-    static pose_with_twist forward_kinematics(pose2d pose, parameters params, wheel_vels vels);
+    static pose_with_twist forward_kinematics(pose2d pose, parameters params, wheel_vels vels, float dt);
 private:
     differential_drive() = default;
 };

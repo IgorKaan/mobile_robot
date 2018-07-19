@@ -37,12 +37,12 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr &
     vels.right_omega = (M_2_PI / 60.0f) * right_rpm;
 
     differential_drive::pose_with_twist pose_twist = differential_drive::forward_kinematics(m_pose, m_robot_params,
-                                                                                            vels);
+                                                                                            vels, dt);
 
     new_pose = pose_twist.pose;
     twist = pose_twist.twist;
     ROS_INFO("%f %f %f %f %f %f %f", left_rpm, right_rpm,
-             new_pose.get_x(), new_pose.get_y(), new_pose.get_theta(), dt, (1.0/dt));
+             new_pose.get_x(), new_pose.get_y(), new_pose.get_theta(), dt);
 
     m_pose = new_pose;
 

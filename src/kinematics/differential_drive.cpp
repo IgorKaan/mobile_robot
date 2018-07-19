@@ -2,7 +2,7 @@
 #include "kinematics/differential_drive.h"
 
 differential_drive::pose_with_twist
-differential_drive::forward_kinematics(pose2d pose, parameters params, wheel_vels vels)
+differential_drive::forward_kinematics(pose2d pose, parameters params, wheel_vels vels, float dt)
 {
     pose_with_twist result;
 
