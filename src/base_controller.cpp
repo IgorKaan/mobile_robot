@@ -56,19 +56,18 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
 
     ROS_INFO("%f %f", vx, az);
 
-    float left_omega = (2*vx - az * L) / (2.0f * R);
-    float right_omega = (2*vx + az * L) / (2.0f * R);
+    float left_vel = (2*vx - az * L) / (2.0f * R);
+    float right_vel = (2*vx + az * L) / (2.0f * R);
+    
+    float left_omega = left_vel / R;
+    float right_omega = right_vel / R;
 
     //vels.left_omega = (M_2_PI / 60.0f) * left_rpm;
     //vels.right_omega = (M_2_PI / 60.0f) * right_rpm;
 
-    //int left_rpm = left_omega * (60.0f / M_2_PI);
-    //int right_rpm = right_omega * (60.0f / M_2_PI);
+    int left_rpm = left_omega * (60.0f / M_2_PI);
+    int right_rpm = right_omega * (60.0f / M_2_PI);
 
-    int left_rpm = left_omega;
-    int right_rpm = right_omega;
-
-    /*
     if (left_rpm > 30) {
         left_rpm = 30;
     } else if (left_rpm < -30) {
@@ -80,7 +79,6 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     } else if (right_rpm < -30) {
         right_rpm = -30;
     }
-    */
 
     arr_msg.data.push_back(left_rpm);
     arr_msg.data.push_back(right_rpm);
