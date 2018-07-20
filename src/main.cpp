@@ -8,5 +8,8 @@
 
 int main() {
 
+    M_2_PI;
+
+
     return 0;
 }
