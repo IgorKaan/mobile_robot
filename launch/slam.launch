@@ -1,5 +1,5 @@
 <launch>
-    <include file="$(find mobile_robot_cooms)/launch/robot_base.launch" />
+    <include file="$(find mobile_robot_comms)/launch/robot_base.launch" />
 
     <node pkg="gmapping" type="slam_gmapping" name="robot_slam_gmapping" output="screen">
         <param name="base_frame" value="base_link"/>
