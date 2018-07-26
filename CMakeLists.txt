@@ -31,7 +31,8 @@ set(LIB_SRC
         include/base_controller.h
         src/base_controller.cpp
         include/odometry_publisher.h
-        src/odometry_publisher.cpp)
+        src/odometry_publisher.cpp
+        src/nodes/laser_filter_node.cpp)
 
 set(LIB_LINK_LIBRARIES
         ${CMAKE_THREAD_LIBS_INIT}
