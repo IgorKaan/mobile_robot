@@ -19,6 +19,7 @@ odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_t
     );
     
     m_prev_time = ros::Time::now();
+    m_last_command_time = ros::Time::now();
 }
 
 void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr& rpm_msg)
@@ -31,6 +32,8 @@ void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr& 
     // TODO: maybe lock?
     m_wheel_vels.left_omega = ((2.0f*M_PI) / 60.0f) * left_rpm;
     m_wheel_vels.right_omega = ((2.0f*M_PI) / 60.0f) * right_rpm;
+
+    m_last_command_time = ros::Time::now();
 }
 
 void odometry_publisher::update()
@@ -38,6 +41,13 @@ void odometry_publisher::update()
     ros::Time current_time = ros::Time::now();
     float dt = (current_time - m_prev_time).toSec();
     m_prev_time = current_time;
+
+    float last_command_dt = (current_time - m_last_command_time).toSec();
+
+    if (last_command_dt > 0.5f) {
+        m_wheel_vels.left_omega = 0.0f;
+        m_wheel_vels.right_omega = 0.0f;
+    }
 
     pose2d new_pose;
     differential_drive::twist2d twist;

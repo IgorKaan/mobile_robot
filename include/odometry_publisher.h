@@ -29,7 +29,7 @@ private:
     pose2d m_pose;
     differential_drive::wheel_vels m_wheel_vels;
     differential_drive::parameters m_robot_params;
-    ros::Time m_prev_time;
+    ros::Time m_prev_time, m_last_command_time;
 };
 
 #endif //MOBILE_ROBOT_COMMS_ODOMETRY_PUBLISHER_H
