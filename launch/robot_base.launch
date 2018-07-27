@@ -20,4 +20,6 @@
     <node pkg="mobile_robot_comms" type="laser_filter_node" name="laser_filter" output="screen">
         <param name="min_range" value="0.3" />
     </node>
+
+
 </launch>
