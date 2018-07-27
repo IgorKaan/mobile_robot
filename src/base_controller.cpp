@@ -7,6 +7,8 @@ base_controller::base_controller(std::string rpm_topic, std::string vel_topic)
     n.param<float>("axis_length", m_robot_params.axis_length, 0.30f);
     n.param<float>("wheel_radius", m_robot_params.wheel_radius, 0.10f);
     n.param<float>("ticks_rev", m_robot_params.ticks_rev, 60);
+    n.param<float>("max_linear_velocity", m_max_lin_vel, 0.5f);
+    n.param<float>("max_angular_velocity", m_max_ang_vel, 2.5f);
 
     sub = n.subscribe(vel_topic, 10, &base_controller::twist_cb, this);
     pub = n.advertise<std_msgs::Int16MultiArray>(rpm_topic, 10);
@@ -43,16 +45,16 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     vx /= 100.0f;
     az /= 10.0f;
 
-    if (vx > 1.5f) {
-        vx = 1.5f;
-    } else if (vx < -1.5f) {
-        vx = -1.5f;
+    if (vx > m_max_lin_vel) {
+        vx = m_max_lin_vel;
+    } else if (vx < -1.0f * m_max_lin_vel) {
+        vx = -1.0f * m_max_lin_vel;
     }
 
-    if (az > 10.0f) {
-        az = 10.0f;
-    } else if (az < -10.0f) {
-        az = -10.0f;
+    if (az > m_max_ang_vel) {
+        az = m_max_ang_vel;
+    } else if (az < -1.0f * m_max_ang_vel) {
+        az = -1.0f * m_max_ang_vel;
     }
     
     float left_omega = (2*vx - az * L) / (2.0f * R);

@@ -7,6 +7,8 @@
         <param name="axis_length" value="0.28" />
         <param name="wheel_radius" value="0.06" />
         <param name="ticks_rev" value="48" />
+        <param name="max_linear_velocity" value="0.25" />
+        <param name="max_angular_velocity" value="1.0" />
     </node>
     <node pkg="mobile_robot_comms" type="odometry_publisher_node" name="odometry_publisher"
           output="screen">

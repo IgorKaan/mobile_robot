@@ -19,6 +19,8 @@ private:
     ros::Publisher pub;
 
     differential_drive::parameters m_robot_params;
+    float m_max_lin_vel;
+    float m_max_ang_vel;
 };
 
 #endif //MOBILE_ROBOT_COMMS_BASE_CONTROLLER_H
