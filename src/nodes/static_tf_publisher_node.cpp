@@ -11,9 +11,9 @@ int main(int argc, char** argv)
 
     tf::TransformBroadcaster broadcaster;
 
-    constexpr float lidar_x = -0.00651f; + 0.07329f;
+    constexpr float lidar_x = -0.07329f + 0.00651f;
     constexpr float lidar_y = 0.0f;
-    constexpr float lidar_z = 0.03909f;
+    constexpr float lidar_z = 0.03909f + 0.02791f;
 
     tf::Quaternion lidar_quat;
     lidar_quat.setRPY(0.0, 0.0, -M_PI);
