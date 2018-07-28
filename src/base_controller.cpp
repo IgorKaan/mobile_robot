@@ -62,9 +62,6 @@ void base_controller::update()
     float L = m_robot_params.axis_length;
     float R = m_robot_params.wheel_radius;
 
-    vx /= 100.0f;
-    az /= 10.0f;
-
     if (vx > m_max_lin_vel) {
         vx = m_max_lin_vel;
     } else if (vx < -1.0f * m_max_lin_vel) {
