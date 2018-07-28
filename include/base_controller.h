@@ -2,10 +2,11 @@
 #define MOBILE_ROBOT_COMMS_BASE_CONTROLLER_H
 
 #include <ros/ros.h>
-#include <std_msgs/Int16MultiArray.h>
+#include <std_msgs/Int16.h>
 #include <geometry_msgs/Twist.h>
 
 #include "kinematics/differential_drive.h"
+
 
 class base_controller
 {
@@ -17,7 +18,7 @@ public:
 private:
     ros::NodeHandle n;
     ros::Subscriber sub;
-    ros::Publisher pub;
+    ros::Publisher left_pub, right_pub;
 
     float m_lin_vel {0.0f};
     float m_ang_vel {0.0f};

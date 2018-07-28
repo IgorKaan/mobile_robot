@@ -11,7 +11,9 @@ base_controller::base_controller(std::string rpm_topic, std::string vel_topic)
     n.param<float>("max_angular_velocity", m_max_ang_vel, 2.5f);
 
     sub = n.subscribe(vel_topic, 32, &base_controller::twist_cb, this);
-    pub = n.advertise<std_msgs::Int16MultiArray>(rpm_topic, 32);
+
+    left_pub = n.advertise<std_msgs::Int16>("/cmd_rpm_left", 10);
+    right_pub = n.advertise<std_msgs::Int16>("/cmd_rpm_right", 10);
 
     ROS_INFO("base_controller params: L: %f, R: %f, T/rev: %f",
              m_robot_params.axis_length,
@@ -52,13 +54,6 @@ void base_controller::update()
     float vx = m_lin_vel;
     float az = m_ang_vel;
 
-    std_msgs::Int16MultiArray arr_msg;
-
-    arr_msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
-    arr_msg.layout.dim[0].label = "rpm";
-    arr_msg.layout.dim[0].size = 2;
-    arr_msg.layout.dim[0].stride = 2;
-
     float L = m_robot_params.axis_length;
     float R = m_robot_params.wheel_radius;
 
@@ -94,8 +89,10 @@ void base_controller::update()
 
     ROS_INFO("%f %f %f %f %d %d", vx, az, left_omega, right_omega, left_rpm, right_rpm);
 
-    arr_msg.data.push_back(left_rpm);
-    arr_msg.data.push_back(right_rpm);
+    std_msgs::Int16 left_msg, right_msg;
+    left_msg.data = left_rpm;
+    right_msg.data = right_rpm;
 
-    pub.publish(arr_msg);
+    left_pub.publish(left_msg);
+    right_pub.publish(right_msg);
 }
