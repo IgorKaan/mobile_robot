@@ -18,6 +18,8 @@ base_controller::base_controller(std::string rpm_topic, std::string vel_topic)
              m_robot_params.wheel_radius,
              m_robot_params.ticks_rev
     );
+
+    m_last_cmd_time = ros::Time::now();
 }
 
 void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
@@ -31,6 +33,25 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     ax = twist_msg->angular.x;
     ay = twist_msg->angular.y;
     az = twist_msg->angular.z;
+
+    m_lin_vel = vx;
+    m_ang_vel = az;
+
+
+    m_last_cmd_time = ros::Time::now();
+}
+
+void base_controller::update()
+{
+    float cb_dt = (ros::Time::now() - m_last_cmd_time).toSec();
+
+    if (cb_dt > 0.25f) {
+        m_lin_vel = 0.0f;
+        m_ang_vel = 0.0f;
+    }
+
+    float vx = m_lin_vel;
+    float az = m_ang_vel;
 
     std_msgs::Int16MultiArray arr_msg;
 
@@ -56,13 +77,13 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     } else if (az < -1.0f * m_max_ang_vel) {
         az = -1.0f * m_max_ang_vel;
     }
-    
+
     float left_omega = (2*vx - az * L) / (2.0f * R);
     float right_omega = (2*vx + az * L) / (2.0f * R);
 
     int left_rpm = left_omega * (60.0f / (2.0f * M_PI));
     int right_rpm = right_omega * (60.0f / (2.0f * M_PI));
-    
+
     if (left_rpm > 30) {
         left_rpm = 30;
     } else if (left_rpm < -30) {
@@ -74,9 +95,9 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     } else if (right_rpm < -30) {
         right_rpm = -30;
     }
-    
+
     ROS_INFO("%f %f %f %f %d %d", vx, az, left_omega, right_omega, left_rpm, right_rpm);
-    
+
     arr_msg.data.push_back(left_rpm);
     arr_msg.data.push_back(right_rpm);
 

@@ -15,6 +15,7 @@ int main(int argc, char** argv)
         ros::Rate rate(300.0f);
         ROS_INFO("Sub: cmd_vel, pub: cmd_rpm");
         while (ros::ok()) {
+            controller.update();
             ros::spinOnce();
             rate.sleep();
         }
