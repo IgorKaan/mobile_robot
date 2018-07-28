@@ -12,7 +12,7 @@ int main(int argc, char** argv)
 
         base_controller controller("/cmd_rpm", "/cmd_vel");
 
-        ros::Rate rate(300.0f);
+        ros::Rate rate(30.0f);
         ROS_INFO("Sub: cmd_vel, pub: cmd_rpm");
         while (ros::ok()) {
             controller.update();
