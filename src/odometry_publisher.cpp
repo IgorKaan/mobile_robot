@@ -44,7 +44,7 @@ void odometry_publisher::update()
 
     float last_command_dt = (current_time - m_last_command_time).toSec();
 
-    if (last_command_dt > 0.25f) {
+    if (last_command_dt > 0.5f) {
         m_wheel_vels.left_omega = 0.0f;
         m_wheel_vels.right_omega = 0.0f;
     }

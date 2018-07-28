@@ -10,8 +10,8 @@ base_controller::base_controller(std::string rpm_topic, std::string vel_topic)
     n.param<float>("max_linear_velocity", m_max_lin_vel, 0.5f);
     n.param<float>("max_angular_velocity", m_max_ang_vel, 2.5f);
 
-    sub = n.subscribe(vel_topic, 10, &base_controller::twist_cb, this);
-    pub = n.advertise<std_msgs::Int16MultiArray>(rpm_topic, 10);
+    sub = n.subscribe(vel_topic, 32, &base_controller::twist_cb, this);
+    pub = n.advertise<std_msgs::Int16MultiArray>(rpm_topic, 32);
 
     ROS_INFO("base_controller params: L: %f, R: %f, T/rev: %f",
              m_robot_params.axis_length,
@@ -37,7 +37,6 @@ void base_controller::twist_cb(const geometry_msgs::Twist::ConstPtr& twist_msg)
     m_lin_vel = vx;
     m_ang_vel = az;
 
-
     m_last_cmd_time = ros::Time::now();
 }
 
@@ -45,7 +44,7 @@ void base_controller::update()
 {
     float cb_dt = (ros::Time::now() - m_last_cmd_time).toSec();
 
-    if (cb_dt > 0.25f) {
+    if (cb_dt > 0.5f) {
         m_lin_vel = 0.0f;
         m_ang_vel = 0.0f;
     }
