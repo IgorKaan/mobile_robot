@@ -4,6 +4,7 @@
 #include <string>
 
 #include <std_msgs/Int16MultiArray.h>
+#include <std_msgs/Int16.h>
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Pose.h>
@@ -16,11 +17,13 @@ class odometry_publisher {
 public:
     odometry_publisher(std::string rpm_topic, std::string odom_topic);
 
-    void odometry_cb(const std_msgs::Int16MultiArray::ConstPtr& rpm_msg);
+    void left_cb(const std_msgs::Int16::ConstPtr& left_msg);
+    void right_cb(const std_msgs::Int16::ConstPtr& right_msg);
+
     void update();
 private:
     ros::NodeHandle n;
-    ros::Subscriber rpm_sub;
+    ros::Subscriber left_sub, right_sub;
     ros::Publisher odom_pub;
     tf::TransformBroadcaster odom_broadcaster;
 
@@ -29,7 +32,7 @@ private:
     pose2d m_pose;
     differential_drive::wheel_vels m_wheel_vels;
     differential_drive::parameters m_robot_params;
-    ros::Time m_prev_time, m_last_command_time;
+    ros::Time m_prev_time, m_last_command_time, m_last_left, m_last_right;
 };
 
 #endif //MOBILE_ROBOT_COMMS_ODOMETRY_PUBLISHER_H

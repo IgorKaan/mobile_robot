@@ -7,8 +7,10 @@ odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_t
     n.param<float>("wheel_radius", m_robot_params.wheel_radius, 0.10f);
     n.param<float>("ticks_rev", m_robot_params.ticks_rev, 60);
 
-    rpm_sub = n.subscribe(rpm_topic, 30, &odometry_publisher::odometry_cb, this);
+    left_sub = n.subscribe("/lwheel", 10, &odometry_publisher::left_cb, this);
+    right_sub = n.subscribe("/rwheel", 10, &odometry_publisher::right_cb, this);
     odom_pub = n.advertise<nav_msgs::Odometry>(odom_topic, 30);
+
     m_wheel_vels.left_omega = 0.0f;
     m_wheel_vels.right_omega = 0.0f;
 
@@ -19,20 +21,24 @@ odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_t
     );
     
     m_prev_time = ros::Time::now();
-    m_last_command_time = ros::Time::now();
+    m_last_left = m_last_right = m_last_command_time = ros::Time::now();
 }
 
-void odometry_publisher::odometry_cb(const std_msgs::Int16MultiArray::ConstPtr& rpm_msg)
+void odometry_publisher::left_cb(const std_msgs::Int16::ConstPtr &left_msg)
 {
-    float left_rpm = (m_left_rpm_old + rpm_msg->data[0]) / 2.0f;
-    float right_rpm = (m_right_rpm_old + rpm_msg->data[1]) / 2.0f;
-    m_left_rpm_old = rpm_msg->data[0];
-    m_right_rpm_old = rpm_msg->data[1];
+    float left_rpm = (m_left_rpm_old + left_msg->data) / 2.0f;
+    m_left_rpm_old = left_msg->data;
 
-    // TODO: maybe lock?
     m_wheel_vels.left_omega = ((2.0f*M_PI) / 60.0f) * left_rpm;
-    m_wheel_vels.right_omega = ((2.0f*M_PI) / 60.0f) * right_rpm;
+    m_last_right = ros::Time::now();
+}
 
+void odometry_publisher::right_cb(const std_msgs::Int16::ConstPtr &right_msg)
+{
+    float right_rpm = (m_right_rpm_old + right_msg->data) / 2.0f;
+    m_right_rpm_old = right_msg->data;
+
+    m_wheel_vels.right_omega = ((2.0f*M_PI) / 60.0f) * right_rpm;
     m_last_command_time = ros::Time::now();
 }
 
@@ -42,16 +48,17 @@ void odometry_publisher::update()
     float dt = (current_time - m_prev_time).toSec();
     m_prev_time = current_time;
 
-    float last_command_dt = (current_time - m_last_command_time).toSec();
+    float last_left_dt = (current_time - m_last_left).toSec();
+    float last_right_dt = (current_time - m_last_right).toSec();
 
-    if (last_command_dt > 0.5f) {
+    if (last_left_dt > 0.5f || last_right_dt > 0.5f) {
         m_wheel_vels.left_omega = 0.0f;
         m_wheel_vels.right_omega = 0.0f;
     }
 
     pose2d new_pose;
     differential_drive::twist2d twist;
-    
+
     differential_drive::pose_with_twist pose_twist = differential_drive::forward_kinematics(m_pose, m_robot_params,
                                                                                             m_wheel_vels, dt);
     new_pose = pose_twist.pose;
