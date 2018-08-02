@@ -21,7 +21,7 @@ odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_t
     );
     
     m_prev_time = ros::Time::now();
-    m_last_left = m_last_right = m_last_command_time = ros::Time::now();
+    m_last_left = m_last_right = ros::Time::now();
 }
 
 void odometry_publisher::left_cb(const std_msgs::Int16::ConstPtr &left_msg)
@@ -30,7 +30,7 @@ void odometry_publisher::left_cb(const std_msgs::Int16::ConstPtr &left_msg)
     m_left_rpm_old = left_msg->data;
 
     m_wheel_vels.left_omega = ((2.0f*M_PI) / 60.0f) * left_rpm;
-    m_last_right = ros::Time::now();
+    m_last_left = ros::Time::now();
 }
 
 void odometry_publisher::right_cb(const std_msgs::Int16::ConstPtr &right_msg)
@@ -39,7 +39,7 @@ void odometry_publisher::right_cb(const std_msgs::Int16::ConstPtr &right_msg)
     m_right_rpm_old = right_msg->data;
 
     m_wheel_vels.right_omega = ((2.0f*M_PI) / 60.0f) * right_rpm;
-    m_last_command_time = ros::Time::now();
+    m_last_right = ros::Time::now();
 }
 
 void odometry_publisher::update()
