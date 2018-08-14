@@ -3,8 +3,6 @@
 
     <node name="map_server" pkg="map_server" type="map_server" args="$(find mobile_robot_comms)/maps/test_map.pgm 0.05" />
 
-    <include file="$(find amcl)/examples/amcl_diff.launch" />
-
     <node pkg="amcl" type="amcl" name="amcl">
         <param name="min_particles" value="500"/>
         <param name="max_particles" value="3000"/>
