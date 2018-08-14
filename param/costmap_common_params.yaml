@@ -24,6 +24,7 @@ obstacle_layer:
   observation_sources:  scan bump
   scan:
     data_type: LaserScan
+    sensor_frame: laser
     topic: scan_filtered
     marking: true
     clearing: true
