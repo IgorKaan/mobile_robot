@@ -75,18 +75,6 @@ void base_controller::update()
     int left_rpm = left_omega * (60.0f / (2.0f * M_PI));
     int right_rpm = right_omega * (60.0f / (2.0f * M_PI));
 
-    if (left_rpm > 30) {
-        left_rpm = 30;
-    } else if (left_rpm < -30) {
-        left_rpm = -30;
-    }
-
-    if (right_rpm > 30) {
-        right_rpm = 30;
-    } else if (right_rpm < -30) {
-        right_rpm = -30;
-    }
-
     ROS_INFO("%f %f %f %f %d %d", vx, az, left_omega, right_omega, left_rpm, right_rpm);
 
     std_msgs::Int16 left_msg, right_msg;
