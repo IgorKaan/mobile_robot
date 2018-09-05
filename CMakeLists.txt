@@ -6,9 +6,10 @@ if (CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
     add_definitions(-DDEBUG)
 endif ()
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 
 find_package(Threads REQUIRED)
+find_package(Eigen3 REQUIRED)
 find_package(catkin QUIET COMPONENTS
         roslaunch
         roscpp
@@ -22,7 +23,11 @@ find_package(catkin QUIET COMPONENTS
         )
 roslaunch_add_file_check(launch)
 
-include_directories(include/)
+# hmmmm
+include_directories(
+        include
+        ${EIGEN3_INCLUDE_DIR}
+        )
 
 set(LIB_SRC
         include/kinematics/differential_drive.h
@@ -32,7 +37,8 @@ set(LIB_SRC
         src/base_controller.cpp
         include/odometry_publisher.h
         src/odometry_publisher.cpp
-        src/nodes/laser_filter_node.cpp)
+        src/nodes/laser_filter_node.cpp
+        include/state_estimation/base_predictor_corrector.h)
 
 set(LIB_LINK_LIBRARIES
         ${CMAKE_THREAD_LIBS_INIT}
@@ -43,8 +49,8 @@ set(LIB_INLCUDE_DIRECTORIES
         )
 
 add_library(mob_comms_lib ${LIB_SRC})
-target_link_libraries(mob_comms_lib ${LIB_LINK_LIBRARIES})
 target_include_directories(mob_comms_lib PUBLIC ${LIB_INCLUDE_DIRECTORIES})
+target_link_libraries(mob_comms_lib ${LIB_LINK_LIBRARIES})
 
 add_executable(mob_comms src/main.cpp)
 target_link_libraries(mob_comms mob_comms_lib)
