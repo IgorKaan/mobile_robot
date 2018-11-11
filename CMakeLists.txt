@@ -45,11 +45,11 @@ set(LIB_LINK_LIBRARIES
         ${CMAKE_THREAD_LIBS_INIT}
         ${catkin_LIBRARIES})
 
-add_library(mob_comms_lib ${LIB_SRC})
-target_link_libraries(mob_comms_lib ${LIB_LINK_LIBRARIES})
+add_library(mob_comms ${LIB_SRC})
+target_link_libraries(mob_comms ${LIB_LINK_LIBRARIES})
 
-add_executable(mob_comms src/main.cpp)
-target_link_libraries(mob_comms mob_comms_lib)
+add_executable(main src/main.cpp)
+target_link_libraries(main mob_comms)
 
 if (${roscpp_FOUND})
     message(STATUS "ROS found")
