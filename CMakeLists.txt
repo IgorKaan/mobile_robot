@@ -23,9 +23,9 @@ find_package(catkin QUIET COMPONENTS
         )
 roslaunch_add_file_check(launch)
 
-# hmmmm
 include_directories(
         include
+        ${catkin_INCLUDE_DIRS}
         ${EIGEN3_INCLUDE_DIR}
         )
 
@@ -38,18 +38,14 @@ set(LIB_SRC
         include/odometry_publisher.h
         src/odometry_publisher.cpp
         src/nodes/laser_filter_node.cpp
-        include/state_estimation/base_predictor_corrector.h)
+        include/state_estimation/imu_odom_ekf.h
+        src/state_estimation/imu_odom_ekf.cpp)
 
 set(LIB_LINK_LIBRARIES
         ${CMAKE_THREAD_LIBS_INIT}
         ${catkin_LIBRARIES})
 
-set(LIB_INLCUDE_DIRECTORIES
-        ${catkin_INCLUDE_DIRS}
-        )
-
 add_library(mob_comms_lib ${LIB_SRC})
-target_include_directories(mob_comms_lib PUBLIC ${LIB_INCLUDE_DIRECTORIES})
 target_link_libraries(mob_comms_lib ${LIB_LINK_LIBRARIES})
 
 add_executable(mob_comms src/main.cpp)

@@ -9,20 +9,20 @@
 class differential_drive {
 public:
     struct parameters {
-        float wheel_radius;
-        float axis_length;
-        float ticks_rev;
+        float wheel_radius {};
+        float axis_length {};
+        float ticks_rev {};
     };
 
     struct wheel_vels {
-        float left_omega;
-        float right_omega;
+        float left_omega {};
+        float right_omega {};
     };
 
     struct twist2d {
-        float vx;
-        float vy;
-        float omega;
+        float vx {};
+        float vy {};
+        float omega {};
     };
 
     struct pose_with_twist {

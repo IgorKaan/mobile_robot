@@ -3,25 +3,18 @@
 #include <termios.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <state_estimation/base_predictor_corrector.h>
 
 #include "kinematics/differential_drive.h"
+#include "state_estimation/imu_odom_ekf.h"
 
-int main() {
-    base_predictor_corrector<6, 3, 3>::state_vector vec;
+int main()
+{
+    imu_odom_ekf ekf;
 
-    for (int i = 0; i < vec.rows(); i++) {
-        vec(i) = i * 3.14f;
-    }
+    ekf.predict(Eigen::Vector3f::Zero());
+    ekf.correct(Eigen::Vector3f::Zero());
 
-    base_predictor_corrector<6, 3, 3>::state_container states;
-
-    states.push_back(vec);
-    states.push_back(vec);
-
-    for (const auto& state : states) {
-        std::cout << state << std::endl;
-    }
+    std::cout << ekf.get_state_vector() << '\n';
 
     return 0;
 }
