@@ -19,6 +19,14 @@ public:
     {
         sensor_msgs::LaserScan filtered = *msg;
 
+        for (int i = 0; i < msg->ranges.size(); i++) {
+            if (msg->ranges[i] < m_min_range) {
+                filtered.ranges[i] = msg->range_max;
+            } else {
+                filtered.ranges[i] = msg->ranges[i];
+            }
+        }
+
         filtered.range_min = m_min_range;
 
         m_pub.publish(filtered);
