@@ -79,7 +79,7 @@ if (${roscpp_FOUND})
 
         add_executable(${node_name} ${ros_node_src})
         target_link_libraries(${node_name}
-                mob_comms_lib)
+                mob_comms)
 
         MESSAGE(STATUS "Generating ROS node " ${node_name})
     endforeach(ros_node_src)
