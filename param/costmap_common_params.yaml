@@ -9,7 +9,7 @@ robot_radius: 0.25  # distance a circular robot should be clear of the obstacle 
 inflation_radius: 0.5
 cost_scaling_factor: 3.0
 
-map_type: voxel
+map_type: costmap
 
 obstacle_layer:
   enabled:              true
