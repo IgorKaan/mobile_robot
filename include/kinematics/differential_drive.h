@@ -12,6 +12,8 @@ public:
         float wheel_radius {};
         float axis_length {};
         float ticks_rev {};
+        float lwheel_alpha {0.5f};
+        float rwheel_alpha {0.5f};
     };
 
     struct wheel_vels {
