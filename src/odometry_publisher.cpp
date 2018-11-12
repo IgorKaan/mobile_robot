@@ -26,8 +26,9 @@ odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_t
 
 void odometry_publisher::left_cb(const std_msgs::Int16::ConstPtr &left_msg)
 {
-    float left_rpm = (m_left_rpm_old + left_msg->data) / 2.0f;
-    m_left_rpm_old = left_msg->data;
+    //float left_rpm = (m_left_rpm_old + left_msg->data) / 2.0f;
+    float left_rpm = differential_drive::lowpass_filter(0.5f, m_left_rpm_old, left_msg->data);
+    m_left_rpm_old = left_rpm;
 
     m_wheel_vels.left_omega = ((2.0f*M_PI) / 60.0f) * left_rpm;
     m_last_left = ros::Time::now();
@@ -35,8 +36,9 @@ void odometry_publisher::left_cb(const std_msgs::Int16::ConstPtr &left_msg)
 
 void odometry_publisher::right_cb(const std_msgs::Int16::ConstPtr &right_msg)
 {
-    float right_rpm = (m_right_rpm_old + right_msg->data) / 2.0f;
-    m_right_rpm_old = right_msg->data;
+    //float right_rpm = (m_right_rpm_old + right_msg->data) / 2.0f;
+    float right_rpm = differential_drive::lowpass_filter(0.5f, m_right_rpm_old, right_msg->data);
+    m_right_rpm_old = right_rpm;
 
     m_wheel_vels.right_omega = ((2.0f*M_PI) / 60.0f) * right_rpm;
     m_last_right = ros::Time::now();
@@ -51,8 +53,11 @@ void odometry_publisher::update()
     float last_left_dt = (current_time - m_last_left).toSec();
     float last_right_dt = (current_time - m_last_right).toSec();
 
-    if (last_left_dt > 0.5f || last_right_dt > 0.5f) {
+    if (last_left_dt > 0.5f) {
         m_wheel_vels.left_omega = 0.0f;
+    }
+
+    if (last_right_dt > 0.5f) {
         m_wheel_vels.right_omega = 0.0f;
     }
 

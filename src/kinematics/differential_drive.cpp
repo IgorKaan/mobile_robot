@@ -80,3 +80,8 @@ differential_drive::forward_kinematics(pose2d pose, parameters params, wheel_vel
 
     return result;
 }
+
+float differential_drive::lowpass_filter(float alpha, float old_val, float new_val)
+{
+    return alpha * new_val + (1 - alpha) * old_val;
+}

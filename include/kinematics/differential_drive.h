@@ -31,6 +31,8 @@ public:
     };
 
     static pose_with_twist forward_kinematics(pose2d pose, parameters params, wheel_vels vels, float dt);
+
+    static float lowpass_filter(float alpha, float old_val, float new_val);
 private:
     differential_drive() = default;
 };
