@@ -1,4 +1,4 @@
-image: maps/test_map.pgm.pgm
+image: src/mobile-robot-comms/maps/spiiras_213_lab.pgm
 resolution: 0.050000
 origin: [-50.000000, -50.000000, 0.000000]
 negate: 0

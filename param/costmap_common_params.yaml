@@ -17,8 +17,6 @@ obstacle_layer:
   track_unknown_space:  true    #true needed for disabling global path planning through unknown space
   obstacle_range: 6.0
   raytrace_range: 6.5
-  z_resolution: 0.2
-  z_voxels: 2
   publish_voxel_map: false
   observation_sources:  scan
   scan:

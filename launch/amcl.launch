@@ -1,7 +1,7 @@
 <launch>
     <include file="$(find mobile_robot_comms)/launch/robot_base.launch" />
 
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find mobile_robot_comms)/maps/test_map.pgm 0.05" />
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find mobile_robot_comms)/maps/spiiras_213_lab.pgm 0.05" />
 
     <node pkg="amcl" type="amcl" name="amcl">
         <param name="min_particles" value="500"/>
