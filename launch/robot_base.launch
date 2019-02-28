@@ -4,23 +4,23 @@
     </node>
     <node pkg="mobile_robot_comms" type="base_controller_node" name="base_controller"
           output="screen">
-        <param name="axis_length" value="0.28" />
-        <param name="wheel_radius" value="0.06" />
+        <param name="axis_length" value="0.33" />
+        <param name="wheel_radius" value="0.09" />
         <param name="ticks_rev" value="48" />
         <param name="max_linear_velocity" value="0.3" />
-        <param name="max_angular_velocity" value="0.5" />
+        <param name="max_angular_velocity" value="0.3" />
     </node>
     <node pkg="mobile_robot_comms" type="odometry_publisher_node" name="odometry_publisher"
           output="screen">
-        <param name="axis_length" value="0.28" />
-        <param name="wheel_radius" value="0.06" />
+        <param name="axis_length" value="0.33" />
+        <param name="wheel_radius" value="0.09" />
         <param name="ticks_rev" value="48" />
         <param name="lwheel_alpha" value="0.5" />
-        <param name="rwheel_alpha" value="0.4" />
+        <param name="rwheel_alpha" value="0.5" />
     </node>
 
     <node pkg="mobile_robot_comms" type="laser_filter_node" name="laser_filter" output="screen">
-        <param name="min_range" value="0.25" />
+        <param name="min_range" value="0.27" />
     </node>
 
 
