@@ -9,9 +9,12 @@ madgwick_filter::madgwick_filter() {
     ros::Rate loop_rate(1000);
     sub = n.subscribe("imu", 1000, &madgwick_filter::callback, this);
     pub = n.advertise<sensor_msgs::Imu>("imu_data", 1000);
+    m_last_callback = ros::Time::now();
 }
 
 void madgwick_filter::callback(const sensor_msgs::Imu& pos) {
+    float delta = (ros::Time::now() - m_last_callback).toSec();
+
     geometry_msgs::Point angles;
     madgwick_filter_library madg;
     madgwick_filter_library::quaternion quaternion;
@@ -20,7 +23,7 @@ void madgwick_filter::callback(const sensor_msgs::Imu& pos) {
     madg.set_drift_bias_gain(0.0f);
     madg.set_algorithm_gain(0.1f);
     madg.madgwick_update(pos.angular_velocity.x, pos.angular_velocity.y, pos.angular_velocity.z,
-            pos.linear_acceleration.x, pos.linear_acceleration.y, pos.linear_acceleration.z, 0.1f);
+            pos.linear_acceleration.x, pos.linear_acceleration.y, pos.linear_acceleration.z, delta);
     angles = madg.get_angles_rad_msg();
 
     geometry_msgs::Quaternion quat = tf::createQuaternionMsgFromRollPitchYaw(angles.x, angles.y, angles.z);
@@ -38,4 +41,6 @@ void madgwick_filter::callback(const sensor_msgs::Imu& pos) {
     pos_filtered.orientation_covariance[8] = 0.1;
 
     pub.publish(pos_filtered);
+
+    m_last_callback = ros::Time::now();
 }
