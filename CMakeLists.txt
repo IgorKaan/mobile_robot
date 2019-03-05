@@ -40,8 +40,14 @@ set(LIB_SRC
         src/nodes/laser_filter_node.cpp
         include/state_estimation/imu_odom_ekf.h
         src/state_estimation/imu_odom_ekf.cpp
-	include/imu.h
-	src/imu.cpp)
+        src/
+        include/imu.h
+        src/imu.cpp
+        include/madgwick_filter.h
+        src/madgwick_filter.cpp
+        include/madgwick_filter_library.h
+        src/madgwick_filter_library.cpp)
+
 
 set(LIB_LINK_LIBRARIES
         ${CMAKE_THREAD_LIBS_INIT}
