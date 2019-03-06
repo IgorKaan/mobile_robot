@@ -8,8 +8,22 @@ using namespace platform_imu;
 madgwick_filter::madgwick_filter() {
     ros::Rate loop_rate(1000);
     sub = n.subscribe("imu", 1000, &madgwick_filter::callback, this);
-    pub = n.advertise<sensor_msgs::Imu>("imu_data", 1000);
+    pub = n.advertise<sensor_msgs::Imu>("imu_data", 10);
+    m_imu_synced_pub = n.advertise<sensor_msgs::Imu>("imu_data_synced", 10);
+    m_odom_synced_pub = n.advertise<nav_msgs::Odometry>("odom_synced", 10);
+
     m_last_callback = ros::Time::now();
+}
+
+ros::NodeHandle madgwick_filter::get_node_handle() const
+{
+    return n;
+}
+
+void madgwick_filter::odom_imu_sync(const nav_msgs::OdometryConstPtr& odom_msg, const sensor_msgs::ImuConstPtr& imu_msg)
+{
+    m_imu_synced_pub.publish(odom_msg);
+    m_odom_synced_pub.publish(imu_msg);
 }
 
 void madgwick_filter::callback(const sensor_msgs::Imu& pos) {

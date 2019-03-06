@@ -21,7 +21,9 @@ odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_t
              m_robot_params.wheel_radius,
              m_robot_params.ticks_rev
     );
-    
+
+    m_last_odom_msg.header.stamp = ros::Time::now();
+
     m_prev_time = ros::Time::now();
     m_last_left = m_last_right = ros::Time::now();
 }
@@ -44,6 +46,11 @@ void odometry_publisher::right_cb(const std_msgs::Int16::ConstPtr &right_msg)
 
     m_wheel_vels.right_omega = ((2.0f*M_PI) / 60.0f) * right_rpm;
     m_last_right = ros::Time::now();
+}
+
+nav_msgs::Odometry odometry_publisher::get_last_odom_msg() const
+{
+    return m_last_odom_msg;
 }
 
 void odometry_publisher::update()
@@ -83,8 +90,8 @@ void odometry_publisher::update()
     odom_transform.header.frame_id = "odom";
     odom_transform.child_frame_id = "base_link";
 
-    odom_transform.transform.translation.x = new_pose.get_x();
-    odom_transform.transform.translation.y = new_pose.get_y();
+    odom_transform.transform.translation.x = m_pose.get_x();
+    odom_transform.transform.translation.y = m_pose.get_y();
     odom_transform.transform.rotation = orient_quat;
 
     odom_broadcaster.sendTransform(odom_transform);
@@ -95,14 +102,34 @@ void odometry_publisher::update()
     odom_msg.child_frame_id = "base_link";
 
     // Pose in frame_id
-    odom_msg.pose.pose.position.x = new_pose.get_x();
-    odom_msg.pose.pose.position.y = new_pose.get_y();
+    odom_msg.pose.pose.position.x = m_pose.get_x();
+    odom_msg.pose.pose.position.y = m_pose.get_y();
     odom_msg.pose.pose.orientation = orient_quat;
 
     // Twist in child_frame_id
     odom_msg.twist.twist.linear.x = twist.vx;
     odom_msg.twist.twist.linear.y = 0.0f;
     odom_msg.twist.twist.angular.z = twist.omega;
+
+    odom_msg.pose.covariance = {
+            0.05, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.05, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.1, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.1, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.1, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.1,
+    };
+
+    odom_msg.twist.covariance = {
+            0.1, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.001, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 999, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 999, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 999, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.1,
+    };
+
+    m_last_odom_msg = odom_msg;
 
     odom_pub.publish(odom_msg);
 }

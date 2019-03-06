@@ -20,12 +20,16 @@ public:
     void left_cb(const std_msgs::Int16::ConstPtr& left_msg);
     void right_cb(const std_msgs::Int16::ConstPtr& right_msg);
 
+    nav_msgs::Odometry get_last_odom_msg() const;
+
     void update();
 private:
     ros::NodeHandle n;
     ros::Subscriber left_sub, right_sub;
     ros::Publisher odom_pub;
     tf::TransformBroadcaster odom_broadcaster;
+
+    nav_msgs::Odometry m_last_odom_msg;
 
     float m_left_rpm_old {0.0f};
     float m_right_rpm_old {0.0f};
