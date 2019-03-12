@@ -1,7 +1,7 @@
 <launch>
     <node pkg="mobile_robot_comms" type="static_tf_publisher_node" name="static_tf_publisher">
     </node>
-    <node pkg="mobile_robot_comms" type="base_controller_node" name="base_controller"> 
+    <node pkg="mobile_robot_comms" type="base_controller_node" name="base_controller">
         <param name="axis_length" value="0.33" />
         <param name="wheel_radius" value="0.09" />
         <param name="ticks_rev" value="48" />
@@ -20,5 +20,4 @@
         <param name="min_range" value="0.27" />
     </node>
 
-    <include file="$(find mobile_robot_comms)/launch/ekf.launch" />
 </launch>

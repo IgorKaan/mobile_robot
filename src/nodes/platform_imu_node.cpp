@@ -2,14 +2,14 @@
 
 using namespace platform_imu;
 
-const std::string bus = "/dev/i2c-5";
+const std::string bus = "/dev/i2c-0";
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "platform_imu_node");
     ros::NodeHandle n;
     ros::Rate loop_rate(100);
     imu im(bus);
-    ros::Publisher pub = n.advertise<sensor_msgs::Imu>("imu", 1);
+    ros::Publisher pub = n.advertise<sensor_msgs::Imu>("imu_raw", 1);
     im.init();
     while (ros::ok()){
         im.read_data();
