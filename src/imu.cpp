@@ -20,7 +20,7 @@ void imu::init() {
     }
     init_gyro();
     init_accel();
-    init_magn();
+    //init_magn();
 }
 
 void imu::init_gyro() {
@@ -92,15 +92,15 @@ void imu::read_data() {
 }
 
 void imu::convert_gyro_data_deg_per_sec() {
-    pos.angular_velocity.x = (gyro_data[1] * 256 + gyro_data[0]) * SENS_FS_250;
-    pos.angular_velocity.y = (gyro_data[3] * 256 + gyro_data[2]) * SENS_FS_250;
-    pos.angular_velocity.z = (gyro_data[5] * 256 + gyro_data[4]) * SENS_FS_250;
+    pos.angular_velocity.x = (gyro_data[1] * 256 + gyro_data[0]) * SENS_FS_CURR;
+    pos.angular_velocity.y = (gyro_data[3] * 256 + gyro_data[2]) * SENS_FS_CURR;
+    pos.angular_velocity.z = (gyro_data[5] * 256 + gyro_data[4]) * SENS_FS_CURR;
 }
 
 void imu::convert_gyro_data_rad_per_sec() {
-    pos.angular_velocity.x = ((gyro_data[1] * 256 + gyro_data[0]) * SENS_FS_250)*(M_PI/180.0);
-    pos.angular_velocity.y = ((gyro_data[3] * 256 + gyro_data[2]) * SENS_FS_250)*(M_PI/180.0);
-    pos.angular_velocity.z = ((gyro_data[5] * 256 + gyro_data[4]) * SENS_FS_250)*(M_PI/180.0);
+    pos.angular_velocity.x = ((gyro_data[1] * 256 + gyro_data[0]) * SENS_FS_CURR)*(M_PI/180.0);
+    pos.angular_velocity.y = ((gyro_data[3] * 256 + gyro_data[2]) * SENS_FS_CURR)*(M_PI/180.0);
+    pos.angular_velocity.z = ((gyro_data[5] * 256 + gyro_data[4]) * SENS_FS_CURR)*(M_PI/180.0);
 }
 
 void imu::convert_accel_data_g() {

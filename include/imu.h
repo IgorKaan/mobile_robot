@@ -26,8 +26,11 @@
 #define REG_OUT_Z_H       0x2D
 
 namespace platform_imu {
-    const float SENS_FS_4 = 6842;
-    const float SENS_FS_250 = 0.00875;
+    const float SENS_FS_4 = 6842.0f;
+    const float SENS_FS_250 = 0.00875f;
+    const float SENS_FS_500 = 0.0175f;
+    const float SENS_FS_2000 = 0.07f;
+    const float SENS_FS_CURR = SENS_FS_2000;
     const float RANGE_2G = 2;
     const float G = 9.8;
     const int num_op_reg = 6;    // number of output x/y/z registers
