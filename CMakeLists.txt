@@ -13,6 +13,7 @@ find_package(Eigen3 REQUIRED)
 find_package(catkin QUIET COMPONENTS
         roslaunch
         roscpp
+        rospy
         std_msgs
         nav_msgs
         sensor_msgs
