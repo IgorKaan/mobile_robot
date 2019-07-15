@@ -3,8 +3,8 @@
         <remap from="imu/data_raw" to="imu_raw" />
         <remap from="imu/data" to="imu_data" />
         <param name="use_mag" value="false" />
-        <param name="gain" value="0.22" />
-        <param name="zeta" value="0.0" />
+        <param name="gain" value="0.05" />
+        <param name="zeta" value="0.1" />
         <param name="publish_tf" value="false" />
     </node>
 </launch>

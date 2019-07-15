@@ -32,7 +32,7 @@ void imu::init_gyro() {
     write(fd, config, sizeof(config));
 
     config[0] = CTRL_REG4;
-    config[1] = 0x30;
+    config[1] = 0x0;
     write(fd, config, sizeof(config));
 }
 

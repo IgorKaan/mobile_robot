@@ -7,13 +7,15 @@ const std::string bus = "/dev/i2c-5";
 int main(int argc, char **argv) {
     ros::init(argc, argv, "platform_imu_node");
     ros::NodeHandle n;
-    ros::Rate loop_rate(100);
+    ros::Rate loop_rate(1000);
     imu im(bus);
-    ros::Publisher pub = n.advertise<sensor_msgs::Imu>("imu_raw", 1);
+    
+    ros::Publisher pub = n.advertise<sensor_msgs::Imu>("imu_raw", 0);
     im.init();
     while (ros::ok()){
         im.read_data();
         im.convert_data();
+
         auto pos = im.get_pos();
         pos.header.frame_id = "base_link";
         pos.header.stamp = ros::Time::now();
