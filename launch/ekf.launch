@@ -9,6 +9,6 @@
         <param name="imu_used" value="true"/>
         <param name="vo_used" value="true"/>
 
-        <remap from="vo" to="gps_meas"/>
+        <remap from="vo" to="/gps/fix"/>
     </node>
 </launch>
