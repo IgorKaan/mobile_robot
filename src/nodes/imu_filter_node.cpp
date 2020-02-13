@@ -11,7 +11,7 @@ public:
     imu_filter_node(const std::string& gyro_topic, const std::string& accel_topic)
         : m_nh("imu_filter_node")
     {
-        m_pub = m_nh.advertise<sensor_msgs::Imu>("/imu", 10);
+        m_pub = m_nh.advertise<sensor_msgs::Imu>("/imu_raw", 10);
 
         ros::Subscriber gyro_sub = m_nh.subscribe<geometry_msgs::Vector3>(gyro_topic, 10, &imu_filter_node::gyro_callback, this);
         ros::Subscriber accel_sub = m_nh.subscribe<geometry_msgs::Vector3>(gyro_topic, 10, &imu_filter_node::accel_callback, this);
