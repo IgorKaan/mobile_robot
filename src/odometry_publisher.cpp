@@ -9,8 +9,8 @@ odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_t
     n.param<float>("lwheel_alpha", m_robot_params.lwheel_alpha, 0.5);
     n.param<float>("rwheel_alpha", m_robot_params.rwheel_alpha, 0.5);
 
-    left_sub = n.subscribe("/lwheel", 10, &odometry_publisher::left_cb, this);
-    right_sub = n.subscribe("/rwheel", 10, &odometry_publisher::right_cb, this);
+    left_sub = n.subscribe("/rpm_left", 10, &odometry_publisher::left_cb, this);
+    right_sub = n.subscribe("/rpm_right", 10, &odometry_publisher::right_cb, this);
     odom_pub = n.advertise<nav_msgs::Odometry>(odom_topic, 30);
 
     m_wheel_vels.left_omega = 0.0f;
