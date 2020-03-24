@@ -9,7 +9,7 @@ public:
     laser_filter(const std::string& scan_topic, const std::string& filtered_scan_topic)
         : m_nh("laser_filter")
     {
-        m_nh.param<float>("min_range", m_min_range, 26.0f);
+        m_nh.param<float>("min_range", m_min_range, 0.26f);
 
         m_sub = m_nh.subscribe(scan_topic, 1, &laser_filter::laser_filter_cb, this);
         m_pub = m_nh.advertise<sensor_msgs::LaserScan>(filtered_scan_topic, 1);

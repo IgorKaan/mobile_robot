@@ -3,8 +3,7 @@
 
 #include <string>
 
-#include <std_msgs/Int16MultiArray.h>
-#include <std_msgs/Int16.h>
+#include <std_msgs/Int8.h>
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Pose.h>
@@ -17,8 +16,8 @@ class odometry_publisher {
 public:
     odometry_publisher(std::string rpm_topic, std::string odom_topic);
 
-    void left_cb(const std_msgs::Int16::ConstPtr& left_msg);
-    void right_cb(const std_msgs::Int16::ConstPtr& right_msg);
+    void left_cb(const std_msgs::Int8::ConstPtr& left_msg);
+    void right_cb(const std_msgs::Int8::ConstPtr& right_msg);
 
     nav_msgs::Odometry get_last_odom_msg() const;
 
