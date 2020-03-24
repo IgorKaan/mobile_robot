@@ -1,6 +1,5 @@
 #include "base_controller.h"
 
-
 base_controller::base_controller(std::string rpm_topic, std::string vel_topic)
     : n("base_controller")
 {
@@ -12,8 +11,8 @@ base_controller::base_controller(std::string rpm_topic, std::string vel_topic)
 
     sub = n.subscribe(vel_topic, 32, &base_controller::twist_cb, this);
 
-    left_pub = n.advertise<std_msgs::Int16>("/cmd_rpm_left", 10);
-    right_pub = n.advertise<std_msgs::Int16>("/cmd_rpm_right", 10);
+    left_pub = n.advertise<std_msgs::Int8>("/rpm_left_sub", 10);
+    right_pub = n.advertise<std_msgs::Int8>("/rpm_right_sub", 10);
 
     ROS_INFO("base_controller params: L: %f, R: %f, T/rev: %f",
              m_robot_params.axis_length,
@@ -77,7 +76,7 @@ void base_controller::update()
 
     ROS_INFO("%f %f %f %f %d %d", vx, az, left_omega, right_omega, left_rpm, right_rpm);
 
-    std_msgs::Int16 left_msg, right_msg;
+    std_msgs::Int8 left_msg, right_msg;
     left_msg.data = left_rpm;
     right_msg.data = right_rpm;
 

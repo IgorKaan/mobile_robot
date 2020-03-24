@@ -38,7 +38,6 @@ set(LIB_SRC
         src/base_controller.cpp
         include/odometry_publisher.h
         src/odometry_publisher.cpp
-        src/nodes/laser_filter_node.cpp
         include/state_estimation/imu_odom_ekf.h
         src/state_estimation/imu_odom_ekf.cpp
         src/

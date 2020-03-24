@@ -9,10 +9,10 @@ public:
     laser_filter(const std::string& scan_topic, const std::string& filtered_scan_topic)
         : m_nh("laser_filter")
     {
-        m_nh.param<float>("min_range", m_min_range, 0.0f);
+        m_nh.param<float>("min_range", m_min_range, 26.0f);
 
-        m_sub = m_nh.subscribe(scan_topic, 10, &laser_filter::laser_filter_cb, this);
-        m_pub = m_nh.advertise<sensor_msgs::LaserScan>(filtered_scan_topic, 10);
+        m_sub = m_nh.subscribe(scan_topic, 1, &laser_filter::laser_filter_cb, this);
+        m_pub = m_nh.advertise<sensor_msgs::LaserScan>(filtered_scan_topic, 1);
     }
 
     void laser_filter_cb(const sensor_msgs::LaserScan::ConstPtr& msg)
@@ -20,7 +20,7 @@ public:
         sensor_msgs::LaserScan filtered = *msg;
 
         for (int i = 0; i < msg->ranges.size(); i++) {
-            if (msg->ranges[i] < m_min_range) {
+            if (msg->ranges[i] <= m_min_range) {
                 filtered.ranges[i] = msg->range_max;
             } else {
                 filtered.ranges[i] = msg->ranges[i];

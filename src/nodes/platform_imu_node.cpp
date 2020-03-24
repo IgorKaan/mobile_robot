@@ -2,7 +2,7 @@
 
 using namespace platform_imu;
 
-const std::string bus = "/dev/i2c-5";
+const std::string bus = "/dev/i2c-0";
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "platform_imu_node");
