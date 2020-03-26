@@ -94,7 +94,7 @@ void odometry_publisher::update()
     odom_transform.transform.translation.y = m_pose.get_y();
     odom_transform.transform.rotation = orient_quat;
 
-    //odom_broadcaster.sendTransform(odom_transform);
+    odom_broadcaster.sendTransform(odom_transform);
 
     nav_msgs::Odometry odom_msg;
     odom_msg.header.stamp = current_time;

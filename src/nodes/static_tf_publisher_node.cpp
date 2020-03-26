@@ -18,7 +18,6 @@ int main(int argc, char** argv)
     constexpr float lidar_z = 0.03909f + 0.02791f;
     tf::Quaternion lidar_quat;
     lidar_quat.setRPY(0.0, 0.0, -M_PI);
-    lidar_quat.normalize();
 
     while (n.ok()) {
         broadcaster.sendTransform(
