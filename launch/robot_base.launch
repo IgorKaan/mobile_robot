@@ -20,6 +20,24 @@
 	<param name="angle_compensate"    type="bool"   value="true"/>
     </node>
 
+    <node name="laser_filter_front" pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen">
+        <rosparam file="$(find mobile_robot_comms)/param/laser_filter_config.yaml" command="load" />
+        <remap from="scan" to="scan_front" />
+        <remap from="scan_filtered" to="scan_front_filtered" />
+    </node>
+
+    <node name="laser_filter_rear" pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen">
+        <rosparam file="$(find mobile_robot_comms)/param/laser_filter_config.yaml" command="load" />
+        <remap from="scan" to="scan_rear" />
+        <remap from="scan_filtered" to="scan_rear_filtered" />
+    </node>
+
+    <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
+	<param name="destination_frame" value="base_link" />
+        <param name="scan_destination_topic" value="/scan_multi" />
+        <param name="laserscan_topics" value="/scan_front_filtered /scan_rear_filtered" />
+    </node>
+
     <node pkg="mobile_robot_comms" type="base_controller_node" name="base_controller">
         <param name="axis_length" value="0.33" />
         <param name="wheel_radius" value="0.09" />
@@ -33,9 +51,5 @@
         <param name="ticks_rev" value="520" />
         <param name="lwheel_alpha" value="0.5" />
         <param name="rwheel_alpha" value="0.5" />
-    </node>
-
-    <node pkg="mobile_robot_comms" type="laser_filter_node" name="laser_filter">
-        <param name="min_range" value="0.27" />
     </node>
 </launch>
