@@ -10,22 +10,30 @@ int main(int argc, char** argv)
 
     ros::Rate r(60.0f);
 
-
     tf::TransformBroadcaster broadcaster;
 
-    constexpr float lidar_x = -0.07329f + 0.00651f;
-    constexpr float lidar_y = 0.0f;
-    constexpr float lidar_z = 0.03909f + 0.02791f;
-    tf::Quaternion lidar_quat;
-    //lidar_quat.setRPY(0.0, 0.0, -M_PI);
-    lidar_quat.setRPY(0.0, 0.0, 0.0);
+    constexpr float lidar_front_x = 0.2496f;
+    constexpr float lidar_front_y = 0.2510f;
+    constexpr float lidar_front_z = 0.3305f;
+    tf::Quaternion lidar_front_quat;
+    //lidar_front_quat.setRPY(0.0, 0.0, 0.0);
+    lidar_front_quat.setRPY(0.0, 0.0, -M_PI);
+
+    constexpr float lidar_rear_x = -0.2496f;
+    constexpr float lidar_rear_y = -0.2510f;
+    constexpr float lidar_rear_z = 0.3305f;
+    tf::Quaternion lidar_rear_quat;
+    lidar_rear_quat.setRPY(0.0, 0.0, 0.0);
 
     while (n.ok()) {
         broadcaster.sendTransform(
                 tf::StampedTransform(
-                        tf::Transform(lidar_quat, tf::Vector3(lidar_x, lidar_y, lidar_z)),
-                        ros::Time::now(), "base_link", "laser"));
-
+                        tf::Transform(lidar_front_quat, tf::Vector3(lidar_front_x, lidar_front_y, lidar_front_z)),
+                        ros::Time::now(), "base_link", "laser_front"));
+        broadcaster.sendTransform(
+                tf::StampedTransform(
+                        tf::Transform(lidar_rear_quat, tf::Vector3(lidar_rear_x, lidar_rear_y, lidar_rear_z)),
+                        ros::Time::now(), "base_link", "laser_rear"));
         r.sleep();
     }
 

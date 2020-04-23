@@ -5,8 +5,6 @@
     <include file="$(find mobile_robot_comms)/launch/ekf.launch" />
     <include file="$(find rplidar_ros)/launch/rplidar_s1.launch" />
 
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find mobile_robot_comms)/maps/spiiras_213_lab.pgm 0.05" />
-
     <include file="$(find mobile_robot_comms)/launch/slam.launch" />
 
     <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
