@@ -33,7 +33,7 @@
     </node>
 
     <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
-	<param name="destination_frame" value="base_link" />
+	<param name="destination_frame" value="laser_merged" />
         <param name="scan_destination_topic" value="/scan_multi" />
         <param name="laserscan_topics" value="/scan_front_filtered /scan_rear_filtered" />
     </node>
