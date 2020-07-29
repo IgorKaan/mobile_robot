@@ -46,7 +46,9 @@ set(LIB_SRC
         include/madgwick_filter.h
         src/madgwick_filter.cpp
         include/madgwick_filter_library.h
-        src/madgwick_filter_library.cpp)
+        src/madgwick_filter_library.cpp
+        include/kinematics/omniwheel_base.h
+        src/kinematics/omniwheel_base.cpp)
 
 
 set(LIB_LINK_LIBRARIES
