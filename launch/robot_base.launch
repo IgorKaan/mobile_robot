@@ -39,9 +39,6 @@
     </node>
 
     <node pkg="mobile_robot_comms" type="base_controller_node" name="base_controller">
-        <param name="axis_length" value="0.33" />
-        <param name="wheel_radius" value="0.09" />
-        <param name="ticks_rev" value="520" />
         <param name="max_linear_velocity" value="0.45" />
         <param name="max_angular_velocity" value="1.0" />
     </node>

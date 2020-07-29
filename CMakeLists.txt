@@ -40,7 +40,6 @@ set(LIB_SRC
         src/odometry_publisher.cpp
         include/state_estimation/imu_odom_ekf.h
         src/state_estimation/imu_odom_ekf.cpp
-        src/
         include/imu.h
         src/imu.cpp
         include/madgwick_filter.h

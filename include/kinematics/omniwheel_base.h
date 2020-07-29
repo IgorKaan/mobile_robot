@@ -14,7 +14,7 @@ public:
     static constexpr float DEFAULT_TOP_LEFT_WHEEL_OFFSET = 0.0f;
     static constexpr float DEFAULT_BOTTOM_LEFT_WHEEL_OFFSET = M_PI/2.0f;
     static constexpr float DEFAULT_BOTTOM_RIGHT_WHEEL_OFFSET = M_PI;
-    static constexpr float DEFAULT_TOP_RIGHT_WHEEL_OFFSET = 3.0f * M_PI / 4.0f;
+    static constexpr float DEFAULT_TOP_RIGHT_WHEEL_OFFSET = 3.0f * M_PI / 2.0f;
 public:
     using twist2d = differential_drive::twist2d;
     using pose_with_twist = differential_drive::pose_with_twist;
