@@ -8,10 +8,10 @@ base_controller::base_controller(std::string vel_topic)
 
     sub = n.subscribe(vel_topic, 32, &base_controller::twist_cb, this);
 
-    top_left_pub = n.advertise<std_msgs::Int8>("/rpm_top_left_pub", 10);
-    bottom_left_pub = n.advertise<std_msgs::Int8>("/rpm_bottom_left_pub", 10);
-    bottom_right_pub = n.advertise<std_msgs::Int8>("/rpm_bottom_right_pub", 10);
-    top_right_pub = n.advertise<std_msgs::Int8>("/rpm_top_right_pub", 10);
+    top_left_pub = n.advertise<std_msgs::Int8>("/rpm_leftFront_sub", 10);
+    bottom_left_pub = n.advertise<std_msgs::Int8>("/rpm_leftBack_sub", 10);
+    bottom_right_pub = n.advertise<std_msgs::Int8>("/rpm_rightBack_sub", 10);
+    top_right_pub = n.advertise<std_msgs::Int8>("/rpm_rightFront_sub", 10);
 
     ROS_INFO("Initialized base_controller for omniwheel_drive");
 
@@ -57,6 +57,12 @@ void base_controller::update()
         vx = -1.0f * m_max_lin_vel;
     }
 
+    if (vy > m_max_lin_vel) {
+        vy = m_max_lin_vel;
+    } else if (vy < -1.0f * m_max_lin_vel) {
+        vy = -1.0f * m_max_lin_vel;
+    }
+
     if (az > m_max_ang_vel) {
         az = m_max_ang_vel;
     } else if (az < -1.0f * m_max_ang_vel) {
@@ -64,10 +70,15 @@ void base_controller::update()
     }
 
     Eigen::MatrixXf jacobian = omniwheel_base::get_local_jacobian(m_robot_params);
+    Eigen::MatrixXf rot_mat = Eigen::MatrixXf(3, 3);
+    float rot_angle = omniwheel_base::DEFAULT_WHEEL_ANGLE;
+    rot_mat << cos(rot_angle), -sin(rot_angle), 0.0f,
+	       sin(rot_angle), cos(rot_angle), 0.0f,
+	       0, 0, 1.0f;
     Eigen::MatrixXf twist_vec = Eigen::MatrixXf(3, 1);
     twist_vec << vx, vy, az;
 
-    Eigen::MatrixXf wheel_vel_vector = jacobian * twist_vec;
+    Eigen::MatrixXf wheel_vel_vector = jacobian * rot_mat * twist_vec;
     float top_left_omega = wheel_vel_vector(0, 0);
     float bottom_left_omega = wheel_vel_vector(1, 0);
     float bottom_right_omega = wheel_vel_vector(2, 0);
