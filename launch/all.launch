@@ -3,6 +3,5 @@
 
     <include file="$(find mobile_robot_comms)/launch/complementary.launch" />
     <include file="$(find mobile_robot_comms)/launch/ekf.launch" />
-    <include file="$(find rplidar_ros)/launch/rplidar_s1.launch" />
     <include file="$(find mobile_robot_comms)/launch/slam.launch" />
 </launch>
