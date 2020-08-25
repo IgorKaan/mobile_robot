@@ -42,7 +42,7 @@
         <param name="max_linear_velocity" value="0.45" />
         <param name="max_angular_velocity" value="1.0" />
     </node>
-    <!--
+
     <node pkg="mobile_robot_comms" type="odometry_publisher_node" name="odometry_publisher"> 
         <param name="axis_length" value="0.33" />
         <param name="wheel_radius" value="0.09" />
@@ -50,5 +50,4 @@
         <param name="lwheel_alpha" value="0.5" />
         <param name="rwheel_alpha" value="0.5" />
     </node>
-    -->
 </launch>
