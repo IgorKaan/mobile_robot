@@ -2,6 +2,16 @@
 
 #include <Eigen/Dense>
 
+
+// Definition is required outside the class to avoid undefined references;
+constexpr float omniwheel_base::DEFAULT_WHEEL_RADIUS;
+constexpr float omniwheel_base::DEFAULT_AXIS_LENGTH;
+constexpr float omniwheel_base::DEFAULT_WHEEL_ANGLE;
+constexpr float omniwheel_base::DEFAULT_TOP_LEFT_WHEEL_OFFSET;
+constexpr float omniwheel_base::DEFAULT_BOTTOM_LEFT_WHEEL_OFFSET;
+constexpr float omniwheel_base::DEFAULT_BOTTOM_RIGHT_WHEEL_OFFSET;
+constexpr float omniwheel_base::DEFAULT_TOP_RIGHT_WHEEL_OFFSET;
+
 omniwheel_base::pose_with_twist omniwheel_base::forward_kinematics(const pose2d& pose, const parameters& params, const wheel_velocities& velocities)
 {
 

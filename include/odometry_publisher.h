@@ -11,31 +11,49 @@
 
 #include "kinematics/pose2d.h"
 #include "kinematics/differential_drive.h"
+#include "kinematics/omniwheel_base.h"
 
 class odometry_publisher {
 public:
+    static const unsigned int WHEEL_COUNT = 4;
+
+    enum wheel_id {
+        TOP_LEFT = 0,
+        BOTTOM_LEFT = 1,
+        BOTTOM_RIGHT = 2,
+        TOP_RIGHT = 3
+    };
+public:
     odometry_publisher(std::string rpm_topic, std::string odom_topic);
 
-    void left_cb(const std_msgs::Int8::ConstPtr& left_msg);
-    void right_cb(const std_msgs::Int8::ConstPtr& right_msg);
+    void top_left_cb(const std_msgs::Int8::ConstPtr& rpm_msg);
+    void bottom_left_cb(const std_msgs::Int8::ConstPtr& rpm_msg);
+    void bottom_right_cb(const std_msgs::Int8::ConstPtr& rpm_msg);
+    void top_right_cb(const std_msgs::Int8::ConstPtr& rpm_msg);
 
     nav_msgs::Odometry get_last_odom_msg() const;
 
     void update();
+
+    void get_omega_from_rpm(int wheel_rpm, int id);
+
 private:
-    ros::NodeHandle n;
-    ros::Subscriber left_sub, right_sub;
-    ros::Publisher odom_pub;
-    tf::TransformBroadcaster odom_broadcaster;
+    ros::NodeHandle m_nh;
+    ros::Subscriber m_wheel_subs[WHEEL_COUNT];
+    ros::Publisher m_odom_pub;
+    tf::TransformBroadcaster m_odom_broadcaster;
 
     nav_msgs::Odometry m_last_odom_msg;
 
-    float m_left_rpm_old {0.0f};
-    float m_right_rpm_old {0.0f};
+    float m_old_wheel_rpm[WHEEL_COUNT];
+
     pose2d m_pose;
-    differential_drive::wheel_vels m_wheel_vels;
-    differential_drive::parameters m_robot_params;
-    ros::Time m_prev_time, m_last_left, m_last_right;
+
+    omniwheel_base::parameters m_robot_params;
+    float m_wheel_velocity[WHEEL_COUNT];
+
+    ros::Time m_prev_time;
+    ros::Time m_last_wheel_time[WHEEL_COUNT];
 };
 
 #endif //MOBILE_ROBOT_COMMS_ODOMETRY_PUBLISHER_H

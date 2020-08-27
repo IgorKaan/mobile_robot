@@ -1,51 +1,54 @@
 #include "odometry_publisher.h"
 
+#include "kinematics/omniwheel_base.h"
+
 odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_topic)
-        : n("odometry_publisher"), m_pose(0.0f, 0.0f, 0.0f)
+        : m_nh("odometry_publisher"), m_pose(0.0f, 0.0f, 0.0f)
 {
-    n.param<float>("axis_length", m_robot_params.axis_length, 0.30f);
-    n.param<float>("wheel_radius", m_robot_params.wheel_radius, 0.10f);
-    n.param<float>("ticks_rev", m_robot_params.ticks_rev, 60);
-    n.param<float>("lwheel_alpha", m_robot_params.lwheel_alpha, 0.5);
-    n.param<float>("rwheel_alpha", m_robot_params.rwheel_alpha, 0.5);
+    m_nh.param<float>("axis_length", m_robot_params.axis_length, omniwheel_base::DEFAULT_AXIS_LENGTH);
+    m_nh.param<float>("wheel_radius", m_robot_params.wheel_radius, omniwheel_base::DEFAULT_WHEEL_RADIUS);
 
-    left_sub = n.subscribe("/rpm_left", 10, &odometry_publisher::left_cb, this);
-    right_sub = n.subscribe("/rpm_right", 10, &odometry_publisher::right_cb, this);
-    odom_pub = n.advertise<nav_msgs::Odometry>(odom_topic, 30);
+    m_wheel_subs[wheel_id::TOP_LEFT] = m_nh.subscribe("/rpm_top_left", 10, &odometry_publisher::top_left_cb, this);
+    m_wheel_subs[wheel_id::BOTTOM_LEFT] = m_nh.subscribe("/rpm_bottom_left", 10, &odometry_publisher::bottom_left_cb, this);
+    m_wheel_subs[wheel_id::BOTTOM_RIGHT] = m_nh.subscribe("/rpm_bottom_right", 10, &odometry_publisher::bottom_right_cb, this);
+    m_wheel_subs[wheel_id::TOP_RIGHT] = m_nh.subscribe("/rpm_top_right", 10, &odometry_publisher::top_right_cb, this);
 
-    m_wheel_vels.left_omega = 0.0f;
-    m_wheel_vels.right_omega = 0.0f;
+    m_odom_pub = m_nh.advertise<nav_msgs::Odometry>(odom_topic, 30);
 
-    ROS_INFO("odometry_publisher params: L: %f, R: %f, T/rev: %f",
-             m_robot_params.axis_length,
-             m_robot_params.wheel_radius,
-             m_robot_params.ticks_rev
-    );
+    ROS_INFO("odometry_publisher started");
 
     m_last_odom_msg.header.stamp = ros::Time::now();
 
     m_prev_time = ros::Time::now();
-    m_last_left = m_last_right = ros::Time::now();
+
+    for (int wid = 0; wid < WHEEL_COUNT; wid++) {
+        m_wheel_velocity[wid] = 0.0f;
+        m_last_wheel_time[wid] = ros::Time::now();
+    }
 }
 
-void odometry_publisher::left_cb(const std_msgs::Int8::ConstPtr &left_msg)
+void odometry_publisher::top_left_cb(const std_msgs::Int8::ConstPtr &rpm_msg)
 {
-    //float left_rpm = (m_left_rpm_old + left_msg->data) / 2.0f;
-    float left_rpm = differential_drive::lowpass_filter(m_robot_params.lwheel_alpha, m_left_rpm_old, left_msg->data);
-    m_left_rpm_old = left_rpm;
-
-    m_wheel_vels.left_omega = ((2.0f*M_PI) / 60.0f) * left_rpm;
-    m_last_left = ros::Time::now();
+    get_omega_from_rpm(rpm_msg->data, wheel_id::TOP_LEFT);
 }
 
-void odometry_publisher::right_cb(const std_msgs::Int8::ConstPtr &right_msg)
-{
-    //float right_rpm = (m_right_rpm_old + right_msg->data) / 2.0f;
-    float right_rpm = differential_drive::lowpass_filter(m_robot_params.rwheel_alpha, m_right_rpm_old, right_msg->data);
-    m_right_rpm_old = right_rpm;
+void odometry_publisher::bottom_left_cb(const std_msgs::Int8::ConstPtr &rpm_msg) {
+    get_omega_from_rpm(rpm_msg->data, wheel_id::BOTTOM_LEFT);
+}
 
-    m_wheel_vels.right_omega = ((2.0f*M_PI) / 60.0f) * right_rpm;
-    m_last_right = ros::Time::now();
+void odometry_publisher::bottom_right_cb(const std_msgs::Int8::ConstPtr &rpm_msg) {
+    get_omega_from_rpm(rpm_msg->data, wheel_id::BOTTOM_RIGHT);
+}
+
+void odometry_publisher::top_right_cb(const std_msgs::Int8::ConstPtr &rpm_msg)
+{
+    get_omega_from_rpm(rpm_msg->data, wheel_id::TOP_RIGHT);
+}
+
+void odometry_publisher::get_omega_from_rpm(int wheel_rpm, int id) {
+    m_old_wheel_rpm[id] = wheel_rpm;
+    m_wheel_velocity[id] = ((2.0f*M_PI) / 60.0f) * wheel_rpm;
+    m_last_wheel_time[id] = ros::Time::now();
 }
 
 nav_msgs::Odometry odometry_publisher::get_last_odom_msg() const
@@ -59,20 +62,16 @@ void odometry_publisher::update()
     float dt = (current_time - m_prev_time).toSec();
     m_prev_time = current_time;
 
-    float last_left_dt = (current_time - m_last_left).toSec();
-    float last_right_dt = (current_time - m_last_right).toSec();
-
-    if (last_left_dt > 0.5f) {
-        m_wheel_vels.left_omega = 0.0f;
-    }
-
-    if (last_right_dt > 0.5f) {
-        m_wheel_vels.right_omega = 0.0f;
+    for (int wid = 0; wid < WHEEL_COUNT; wid++) {
+        if ((current_time - m_last_wheel_time[wid]).toSec() > 0.5f) {
+            m_wheel_velocity[wid] = 0.0f;
+        }
     }
 
     pose2d new_pose;
     differential_drive::twist2d twist;
 
+    /*
     differential_drive::pose_with_twist pose_twist = differential_drive::forward_kinematics(m_pose, m_robot_params,
                                                                                             m_wheel_vels, dt);
     new_pose = pose_twist.pose;
@@ -133,4 +132,5 @@ void odometry_publisher::update()
     m_last_odom_msg = odom_msg;
 
     odom_pub.publish(odom_msg);
+    */
 }
