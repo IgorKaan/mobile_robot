@@ -36,7 +36,7 @@ public:
         float top_right_omega {};
     };
 
-    static pose_with_twist forward_kinematics(const pose2d& pose, const parameters& params, const wheel_velocities& velocities);
+    static pose_with_twist forward_kinematics(const pose2d& pose, const parameters& parameters, const wheel_velocities& velocities, float dt);
     static Eigen::MatrixXf get_local_jacobian(const parameters& parameters);
 private:
     omniwheel_base() = default;

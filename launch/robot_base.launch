@@ -44,10 +44,9 @@
     </node>
 
     <node pkg="mobile_robot_comms" type="odometry_publisher_node" name="odometry_publisher"> 
+	<!--
         <param name="axis_length" value="0.33" />
         <param name="wheel_radius" value="0.09" />
-        <param name="ticks_rev" value="520" />
-        <param name="lwheel_alpha" value="0.5" />
-        <param name="rwheel_alpha" value="0.5" />
+	-->
     </node>
 </launch>

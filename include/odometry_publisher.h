@@ -9,8 +9,6 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Quaternion.h>
 
-#include "kinematics/pose2d.h"
-#include "kinematics/differential_drive.h"
 #include "kinematics/omniwheel_base.h"
 
 class odometry_publisher {

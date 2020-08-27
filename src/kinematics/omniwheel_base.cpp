@@ -1,6 +1,7 @@
 #include "kinematics/omniwheel_base.h"
 
 #include <Eigen/Dense>
+#include <Eigen/QR>
 
 
 // Definition is required outside the class to avoid undefined references;
@@ -12,9 +13,40 @@ constexpr float omniwheel_base::DEFAULT_BOTTOM_LEFT_WHEEL_OFFSET;
 constexpr float omniwheel_base::DEFAULT_BOTTOM_RIGHT_WHEEL_OFFSET;
 constexpr float omniwheel_base::DEFAULT_TOP_RIGHT_WHEEL_OFFSET;
 
-omniwheel_base::pose_with_twist omniwheel_base::forward_kinematics(const pose2d& pose, const parameters& params, const wheel_velocities& velocities)
+omniwheel_base::pose_with_twist omniwheel_base::forward_kinematics(const pose2d& pose, const parameters& parameters, const wheel_velocities& velocities, float dt)
 {
+    pose_with_twist result;
 
+    Eigen::MatrixXf J = get_local_jacobian(parameters);
+    Eigen::MatrixXf Jpinv = J.completeOrthogonalDecomposition().pseudoInverse();
+
+    Eigen::MatrixXf wheel_angular_vels = Eigen::MatrixXf(4, 1);
+    wheel_angular_vels << velocities.top_left_omega,
+                          velocities.bottom_left_omega,
+                          velocities.bottom_right_omega,
+                          velocities.top_right_omega;
+    Eigen::MatrixXf robot_velocities =  Jpinv * wheel_angular_vels;
+
+    twist2d twist;
+    twist.vx = robot_velocities(0, 0);
+    twist.vy = robot_velocities(1, 0);
+    twist.omega = robot_velocities(2, 0);
+
+    float dx = dt * (std::cos(-pose.get_theta()) * twist.vx + std::sin(-pose.get_theta()) * twist.vy);
+    float dy = dt * (-std::sin(-pose.get_theta()) * twist.vx + std::cos(-pose.get_theta()) * twist.vy);
+    float dtheta = dt * twist.omega;
+
+    pose2d new_pose;
+    new_pose.set_x(pose.get_x() + dx);
+    new_pose.set_y(pose.get_y() + dy);
+    // Just to make sure theta is normalized
+    new_pose.set_theta(pose.get_theta());
+    new_pose.set_theta(new_pose.get_theta() + dtheta);
+
+    result.pose = new_pose;
+    result.twist = twist;
+
+    return result;
 }
 
 Eigen::MatrixXf omniwheel_base::get_local_jacobian(const parameters& parameters)

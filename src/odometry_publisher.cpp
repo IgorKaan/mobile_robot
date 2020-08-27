@@ -8,10 +8,10 @@ odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_t
     m_nh.param<float>("axis_length", m_robot_params.axis_length, omniwheel_base::DEFAULT_AXIS_LENGTH);
     m_nh.param<float>("wheel_radius", m_robot_params.wheel_radius, omniwheel_base::DEFAULT_WHEEL_RADIUS);
 
-    m_wheel_subs[wheel_id::TOP_LEFT] = m_nh.subscribe("/rpm_top_left", 10, &odometry_publisher::top_left_cb, this);
-    m_wheel_subs[wheel_id::BOTTOM_LEFT] = m_nh.subscribe("/rpm_bottom_left", 10, &odometry_publisher::bottom_left_cb, this);
-    m_wheel_subs[wheel_id::BOTTOM_RIGHT] = m_nh.subscribe("/rpm_bottom_right", 10, &odometry_publisher::bottom_right_cb, this);
-    m_wheel_subs[wheel_id::TOP_RIGHT] = m_nh.subscribe("/rpm_top_right", 10, &odometry_publisher::top_right_cb, this);
+    m_wheel_subs[wheel_id::TOP_LEFT] = m_nh.subscribe("/rpm_left_front", 10, &odometry_publisher::top_left_cb, this);
+    m_wheel_subs[wheel_id::BOTTOM_LEFT] = m_nh.subscribe("/rpm_left_back", 10, &odometry_publisher::bottom_left_cb, this);
+    m_wheel_subs[wheel_id::BOTTOM_RIGHT] = m_nh.subscribe("/rpm_right_back", 10, &odometry_publisher::bottom_right_cb, this);
+    m_wheel_subs[wheel_id::TOP_RIGHT] = m_nh.subscribe("/rpm_right_front", 10, &odometry_publisher::top_right_cb, this);
 
     m_odom_pub = m_nh.advertise<nav_msgs::Odometry>(odom_topic, 30);
 
@@ -63,21 +63,24 @@ void odometry_publisher::update()
     m_prev_time = current_time;
 
     for (int wid = 0; wid < WHEEL_COUNT; wid++) {
-        if ((current_time - m_last_wheel_time[wid]).toSec() > 0.5f) {
+        if ((current_time - m_last_wheel_time[wid]).toSec() > 1.0f) {
             m_wheel_velocity[wid] = 0.0f;
         }
     }
 
     pose2d new_pose;
-    differential_drive::twist2d twist;
+    omniwheel_base::twist2d twist;
 
-    /*
-    differential_drive::pose_with_twist pose_twist = differential_drive::forward_kinematics(m_pose, m_robot_params,
-                                                                                            m_wheel_vels, dt);
+    omniwheel_base::wheel_velocities wheel_angular_vels;
+    wheel_angular_vels.top_left_omega = m_wheel_velocity[wheel_id::TOP_LEFT];
+    wheel_angular_vels.bottom_left_omega = m_wheel_velocity[wheel_id::BOTTOM_LEFT];
+    wheel_angular_vels.bottom_right_omega = m_wheel_velocity[wheel_id::BOTTOM_RIGHT];
+    wheel_angular_vels.top_right_omega = m_wheel_velocity[wheel_id::TOP_RIGHT];
+
+    omniwheel_base::pose_with_twist pose_twist = omniwheel_base::forward_kinematics(m_pose, m_robot_params,
+                                                                                    wheel_angular_vels, dt);
     new_pose = pose_twist.pose;
     twist = pose_twist.twist;
-    ROS_INFO("%f %f %f %f %f %f %f", m_wheel_vels.left_omega, m_wheel_vels.right_omega,
-             new_pose.get_x(), new_pose.get_y(), new_pose.get_theta(), dt);
 
     m_pose = new_pose;
 
@@ -93,7 +96,7 @@ void odometry_publisher::update()
     odom_transform.transform.translation.y = m_pose.get_y();
     odom_transform.transform.rotation = orient_quat;
 
-    //odom_broadcaster.sendTransform(odom_transform);
+    //m_odom_broadcaster.sendTransform(odom_transform);
 
     nav_msgs::Odometry odom_msg;
     odom_msg.header.stamp = current_time;
@@ -108,7 +111,7 @@ void odometry_publisher::update()
 
     // Twist in child_frame_id
     odom_msg.twist.twist.linear.x = twist.vx;
-    odom_msg.twist.twist.linear.y = 0.0f;
+    odom_msg.twist.twist.linear.y = twist.vy;
     odom_msg.twist.twist.angular.z = twist.omega;
 
     odom_msg.pose.covariance = {
@@ -130,7 +133,5 @@ void odometry_publisher::update()
     };
 
     m_last_odom_msg = odom_msg;
-
-    odom_pub.publish(odom_msg);
-    */
+    m_odom_pub.publish(odom_msg);
 }
