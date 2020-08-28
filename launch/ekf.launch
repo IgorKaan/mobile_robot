@@ -12,5 +12,6 @@
 	<!--
         <remap from="vo" to="/gps/fix"/>
 	-->
+        <remap from="robot_pose_ekf/odom_combined" to="odom_combined" />
     </node>
 </launch>

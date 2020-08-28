@@ -4,7 +4,7 @@
 
     <node name="rplidarNode_front" pkg="rplidar_ros"  type="rplidarNode" output="screen">
 	<remap from="scan" to="scan_front" />
-	<param name="serial_port"         type="string" value="/dev/ttyUSB1"/>
+	<param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
 	<param name="serial_baudrate"     type="int"    value="256000"/>
 	<param name="frame_id"            type="string" value="laser_front"/>
 	<param name="inverted"            type="bool"   value="false"/>
@@ -13,7 +13,7 @@
 
     <node name="rplidarNode_rear" pkg="rplidar_ros"  type="rplidarNode" output="screen">
 	<remap from="scan" to="scan_rear" />
-	<param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+	<param name="serial_port"         type="string" value="/dev/ttyUSB1"/>
 	<param name="serial_baudrate"     type="int"    value="256000"/>
 	<param name="frame_id"            type="string" value="laser_rear"/>
 	<param name="inverted"            type="bool"   value="false"/>
@@ -49,4 +49,9 @@
         <param name="wheel_radius" value="0.09" />
 	-->
     </node>
+
+    <node pkg="mobile_robot_comms" type="imu_filter_node" name="imu_filter_node" />
+
+    <include file="$(find mobile_robot_comms)/launch/complementary.launch" />
+    <include file="$(find mobile_robot_comms)/launch/ekf.launch" />
 </launch>
