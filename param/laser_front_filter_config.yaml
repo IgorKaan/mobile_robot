@@ -1,5 +1,5 @@
 scan_filter_chain:
-- name: range_cutoff1
+- name: range_cutoff_front
   type: laser_filters/LaserScanAngularBoundsFilterInPlace
   params:
     lower_angle: -0.785
