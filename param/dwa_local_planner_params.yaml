@@ -1,15 +1,15 @@
 DWAPlannerROS:
 # Robot Configuration Parameters - Kobuki
-  max_vel_x: 0.20
-  min_vel_x: -0.20
+  max_vel_x: 0.21
+  min_vel_x: -0.21
 
-  max_vel_y: 0.20 # diff drive robot
-  min_vel_y: -0.20  # diff drive robot
+  max_vel_y: 0.21 # diff drive robot
+  min_vel_y: -0.21  # diff drive robot
 
-  max_vel_trans: 0.25 # choose slightly less than the base's capability
-  min_vel_trans: 0.10 # this is the min trans velocity when there is negligible rotational velocity
+  max_vel_trans: 0.21 # choose slightly less than the base's capability
+  min_vel_trans: 0.14 # this is the min trans velocity when there is negligible rotational velocity
 
-  max_vel_theta: 0.45 # choose slightly less than the base's capability
+  max_vel_theta: 0.40 # choose slightly less than the base's capability
   min_vel_theta: 0.20 # this is the min angular velocity when there is negligible translational velocity
 
   acc_lim_x: 1.0 # maximum is theoretically 2.0, but we
@@ -22,9 +22,9 @@ DWAPlannerROS:
   latch_xy_goal_tolerance: true
 
 # Forward Simulation Parameters
-  sim_time: 1.7       # 1.7
-  vx_samples: 10      # 3
-  vy_samples: 10      # diff drive robot, there is only one sample
+  sim_time: 1.0      # 1.7
+  vx_samples: 6      # 3
+  vy_samples: 6      # diff drive robot, there is only one sample
   vtheta_samples: 20  # 20
   controller_frequency: 10.0
 
@@ -33,8 +33,8 @@ DWAPlannerROS:
   goal_distance_bias: 24.0     # 24.0   - wighting for how much it should attempt to reach its goal
   occdist_scale: 0.01          # 0.01   - weighting for how much the controller should avoid obstacles
   forward_point_distance: 0.325 # 0.325  - how far along to place an additional scoring point
-  stop_time_buffer: 0.2         # 0.2    - amount of time a robot must stop in before colliding for a valid traj.
-  scaling_speed: 0.25      # 0.25   - absolute velocity at which to start scaling the robot's footprint
+  stop_time_buffer: 0.1        # 0.2    - amount of time a robot must stop in before colliding for a valid traj.
+  scaling_speed: 0.30     # 0.25   - absolute velocity at which to start scaling the robot's footprint
   max_scaling_factor: 0.1      # 0.2    - how much to scale the robot's footprint when at speed.
 
 # Oscillation Prevention Parameters

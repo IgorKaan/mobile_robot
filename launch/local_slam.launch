@@ -1,5 +1,5 @@
 <launch>
+    <include file="$(find mobile_robot_comms)/launch/robot_base.launch" />
     <include file="$(find mobile_robot_comms)/launch/slam.launch" />
-
     <include file="$(find mobile_robot_comms)/launch/move_base.launch" />
 </launch>

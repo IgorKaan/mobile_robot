@@ -1,6 +1,12 @@
 <launch>
-    <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_node" output="screen">
-        <remap from="imu/data_raw" to="imu_raw" />
+    <node pkg="imu_calib" type="apply_calib" name="apply_calib" output="screen">
+        <remap from="raw" to="imu_raw" />
+        <remap from="corrected" to="imu_raw_corrected" />
+        <param name="calib_file" value="$(find mobile_robot_comms)/param/imu_calib.yaml" />
+    </node>
+
+    <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_madgwick_filter_node" output="screen">
+        <remap from="imu/data_raw" to="imu_raw_corrected" />
         <remap from="imu/data" to="imu_data" />
         <param name="use_mag" value="false" />
         <param name="gain" value="0.05" />

@@ -1,11 +1,8 @@
 <launch>
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find mobile_robot_comms)/maps/spiiras_213_lab.pgm 0.05" />
-
-    <!--
-    <include file="$(find mobile_robot_comms)/launch/slam.launch" />
-    -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find mobile_robot_comms)/maps/spiiras_213_lab.yaml" />
 
     <node pkg="amcl" type="amcl" name="amcl">
+        <param name="use_map_topic" value="false" />
         <param name="min_particles" value="256"/>
         <param name="max_particles" value="1024"/>
         <param name="kld_err" value="0.02"/>
@@ -20,8 +17,8 @@
         <param name="initial_pose_a" value="0.0"/>
         <param name="gui_publish_rate" value="50.0"/>
 
-        <remap from="scan"                      to="scan_filtered"/>
-        <param name="laser_max_range"           value="10.0"/>
+        <remap from="scan"                      to="scan_multi"/>
+        <param name="laser_max_range"           value="16.1"/>
         <param name="laser_max_beams"           value="360"/>
         <param name="laser_z_hit"               value="0.5"/>
         <param name="laser_z_short"             value="0.05"/>
@@ -32,23 +29,12 @@
         <param name="laser_likelihood_max_dist" value="2.0"/>
         <param name="laser_model_type"          value="likelihood_field"/>
 
-        <param name="odom_model_type"           value="diff"/>
+        <param name="odom_model_type"           value="omni"/>
         <param name="odom_alpha1"               value="0.1"/>
         <param name="odom_alpha2"               value="0.2"/>
         <param name="odom_alpha3"               value="0.1"/>
         <param name="odom_alpha4"               value="0.02"/>
         <param name="odom_frame_id"             value="odom_combined"/>
         <param name="base_frame_id"             value="base_link"/>
-    </node>
-
-    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-        <rosparam file="$(find mobile_robot_comms)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
-        <rosparam file="$(find mobile_robot_comms)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
-        <rosparam file="$(find mobile_robot_comms)/param/local_costmap_params.yaml" command="load" />
-        <rosparam file="$(find mobile_robot_comms)/param/global_costmap_params.yaml" command="load" />
-        <rosparam file="$(find mobile_robot_comms)/param/move_base_params.yaml" command="load" />
-        <rosparam file="$(find mobile_robot_comms)/param/dwa_local_planner_params.yaml" command="load" />
-        <remap from="cmd_vel" to="cmd_vel" />
-        <remap from="odom" to="odom_combined" />
     </node>
 </launch>

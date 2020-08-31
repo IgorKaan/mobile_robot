@@ -59,6 +59,6 @@
 
     <node pkg="mobile_robot_comms" type="imu_filter_node" name="imu_filter_node" />
 
-    <include file="$(find mobile_robot_comms)/launch/complementary.launch" />
+    <include file="$(find mobile_robot_comms)/launch/madgwick.launch" />
     <include file="$(find mobile_robot_comms)/launch/ekf.launch" />
 </launch>
