@@ -8,8 +8,9 @@
 
 class omniwheel_base {
 public:
-    static constexpr float DEFAULT_WHEEL_RADIUS = 0.0625f;
-    static constexpr float DEFAULT_AXIS_LENGTH = 0.25917f;
+    static constexpr float DEFAULT_WHEEL_RADIUS = 0.065f;
+    //static constexpr float DEFAULT_AXIS_LENGTH = 0.25917f;
+    static constexpr float DEFAULT_AXIS_LENGTH = 0.335;
     static constexpr float DEFAULT_WHEEL_ANGLE = M_PI / 4.0f;
     static constexpr float DEFAULT_TOP_LEFT_WHEEL_OFFSET = 0.0f;
     static constexpr float DEFAULT_BOTTOM_LEFT_WHEEL_OFFSET = M_PI/2.0f;

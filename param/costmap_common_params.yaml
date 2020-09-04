@@ -3,13 +3,13 @@ plugins:
         - {name: obstacles, type: "costmap_2d::VoxelLayer"}
         - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
           
-obstacle_range: 16.0
-raytrace_range: 16.0
+obstacle_range: 8.1
+raytrace_range: 8.1
 
-robot_radius: 0.38
+robot_radius: 0.40
 
 inflation_radius: 0.4
-cost_scaling_factor: 2.0 
+cost_scaling_factor: 3.0
 
 map_type: costmap
 obstacles:

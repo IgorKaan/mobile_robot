@@ -37,11 +37,12 @@ omniwheel_base::pose_with_twist omniwheel_base::forward_kinematics(const pose2d&
     float dtheta = dt * twist.omega;
 
     pose2d new_pose;
+    new_pose.set_theta(pose.get_theta());
+    new_pose.set_theta(new_pose.get_theta() + dtheta);
+
     new_pose.set_x(pose.get_x() + dx);
     new_pose.set_y(pose.get_y() + dy);
     // Just to make sure theta is normalized
-    new_pose.set_theta(pose.get_theta());
-    new_pose.set_theta(new_pose.get_theta() + dtheta);
 
     result.pose = new_pose;
     result.twist = twist;

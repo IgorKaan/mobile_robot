@@ -1,6 +1,7 @@
 #include "odometry_publisher.h"
 
 #include "kinematics/omniwheel_base.h"
+#include "kinematics/differential_drive.h"
 
 odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_topic)
         : m_nh("odometry_publisher"), m_pose(0.0f, 0.0f, 0.0f)
@@ -13,7 +14,7 @@ odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_t
     m_wheel_subs[wheel_id::BOTTOM_RIGHT] = m_nh.subscribe("/rpm_right_back", 10, &odometry_publisher::bottom_right_cb, this);
     m_wheel_subs[wheel_id::TOP_RIGHT] = m_nh.subscribe("/rpm_right_front", 10, &odometry_publisher::top_right_cb, this);
 
-    m_odom_pub = m_nh.advertise<nav_msgs::Odometry>(odom_topic, 30);
+    m_odom_pub = m_nh.advertise<nav_msgs::Odometry>(odom_topic, 1);
 
     ROS_INFO("odometry_publisher started");
 
@@ -24,6 +25,7 @@ odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_t
     for (int wid = 0; wid < WHEEL_COUNT; wid++) {
         m_wheel_velocity[wid] = 0.0f;
         m_last_wheel_time[wid] = ros::Time::now();
+	m_old_wheel_rpm[wid] = 0;
     }
 }
 
@@ -46,7 +48,7 @@ void odometry_publisher::top_right_cb(const std_msgs::Int8::ConstPtr &rpm_msg)
 }
 
 void odometry_publisher::get_omega_from_rpm(int wheel_rpm, int id) {
-    m_old_wheel_rpm[id] = wheel_rpm;
+    m_old_wheel_rpm[id] = differential_drive::lowpass_filter(0.5, m_old_wheel_rpm[id], wheel_rpm);
     m_wheel_velocity[id] = ((2.0f*M_PI) / 60.0f) * wheel_rpm;
     m_last_wheel_time[id] = ros::Time::now();
 }
@@ -63,7 +65,7 @@ void odometry_publisher::update()
     m_prev_time = current_time;
 
     for (int wid = 0; wid < WHEEL_COUNT; wid++) {
-        if ((current_time - m_last_wheel_time[wid]).toSec() > 1.0f) {
+        if ((current_time - m_last_wheel_time[wid]).toSec() > 0.5f) {
             m_wheel_velocity[wid] = 0.0f;
         }
     }
@@ -115,21 +117,21 @@ void odometry_publisher::update()
     odom_msg.twist.twist.angular.z = twist.omega;
 
     odom_msg.pose.covariance = {
-            0.05, 0.0, 0.0, 0.0, 0.0, 0.0,
-            0.0, 0.05, 0.0, 0.0, 0.0, 0.0,
+            0.1, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.1, 0.0, 0.0, 0.0, 0.0,
             0.0, 0.0, 0.1, 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0, 0.1, 0.0, 0.0,
-            0.0, 0.0, 0.0, 0.0, 0.1, 0.0,
-            0.0, 0.0, 0.0, 0.0, 0.0, 0.1,
+            0.0, 0.0, 0.0, 0.001, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.001, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.002
     };
 
     odom_msg.twist.covariance = {
-            0.01, 0.0, 0.0, 0.0, 0.0, 0.0,
-            0.0, 0.01, 0.0, 0.0, 0.0, 0.0,
+            0.05, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.05, 0.0, 0.0, 0.0, 0.0,
             0.0, 0.0, 999, 0.0, 0.0, 0.0,
             0.0, 0.0, 0.0, 999, 0.0, 0.0,
             0.0, 0.0, 0.0, 0.0, 999, 0.0,
-            0.0, 0.0, 0.0, 0.0, 0.0, 0.1,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.01
     };
 
     m_last_odom_msg = odom_msg;

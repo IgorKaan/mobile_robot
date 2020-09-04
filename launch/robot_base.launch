@@ -4,7 +4,7 @@
 
     <node name="rplidarNode_front" pkg="rplidar_ros"  type="rplidarNode" output="screen">
 	<remap from="scan" to="scan_front" />
-	<param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+	<param name="serial_port"         type="string" value="/dev/ttyUSB1"/>
 	<param name="serial_baudrate"     type="int"    value="256000"/>
 	<param name="frame_id"            type="string" value="laser_front"/>
 	<param name="inverted"            type="bool"   value="false"/>
@@ -13,7 +13,7 @@
 
     <node name="rplidarNode_rear" pkg="rplidar_ros"  type="rplidarNode" output="screen">
 	<remap from="scan" to="scan_rear" />
-	<param name="serial_port"         type="string" value="/dev/ttyUSB1"/>
+	<param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
 	<param name="serial_baudrate"     type="int"    value="256000"/>
 	<param name="frame_id"            type="string" value="laser_rear"/>
 	<param name="inverted"            type="bool"   value="false"/>
@@ -32,10 +32,11 @@
         <remap from="scan_filtered" to="scanrf" />
     </node>
 
+    <!--
     <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
 	<param name="destination_frame" value="laser_merged" />
         <param name="scan_destination_topic" value="/scan_multi" />
-        <param name="laserscan_topics" value="/scanff /scanrf"/>
+        <param name="laserscan_topics" value="/scanrf /scanff"/>
 
 	<param name="angle_min" value="-3.12413" />
 	<param name="angle_max" value="3.14159" />
@@ -44,10 +45,11 @@
         <param name="angle_increment" value="0.0087" />
         <param name="scan_time" value="0.094"/>
     </node>
+    -->
 
     <node pkg="mobile_robot_comms" type="base_controller_node" name="base_controller">
-        <param name="max_linear_velocity" value="0.45" />
-        <param name="max_angular_velocity" value="0.5" />
+        <param name="max_linear_velocity" value="0.5" />
+        <param name="max_angular_velocity" value="0.6" />
     </node>
 
     <node pkg="mobile_robot_comms" type="odometry_publisher_node" name="odometry_publisher"> 
