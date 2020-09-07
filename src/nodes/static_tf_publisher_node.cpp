@@ -12,25 +12,25 @@ int main(int argc, char** argv)
 
     tf::TransformBroadcaster broadcaster;
 
-    /*
-    constexpr float lidar_front_x = 0.2496f;
-    constexpr float lidar_front_y = 0.2510f;
+    constexpr float lidar_front_x = 0.2498f;
+    constexpr float lidar_front_y = 0.2498f;
     constexpr float lidar_front_z = 0.3305f;
-    */
+    /*
     constexpr float lidar_front_x = 0.2525;
     constexpr float lidar_front_y = 0.3025;
     constexpr float lidar_front_z = 0.3305f;
+    */
     tf::Quaternion lidar_front_quat;
     lidar_front_quat.setRPY(0.0, 0.0, M_PI+M_PI/4);
 
-    /*
-    constexpr float lidar_rear_x = -0.2496;
-    constexpr float lidar_rear_y = -0.2510f;
+    constexpr float lidar_rear_x = -0.2498f;
+    constexpr float lidar_rear_y = -0.2498f;
     constexpr float lidar_rear_z = 0.3305f;
-    */
+    /*
     constexpr float lidar_rear_x = -0.2225;
     constexpr float lidar_rear_y = -0.3025;
     constexpr float lidar_rear_z = 0.3305f;
+    */
     tf::Quaternion lidar_rear_quat;
     lidar_rear_quat.setRPY(0.0, 0.0, M_PI/4);
 
