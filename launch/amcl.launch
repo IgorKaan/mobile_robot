@@ -19,7 +19,7 @@
         <param name="initial_pose_a" value="0.0"/>
         <param name="gui_publish_rate" value="50.0"/>
 
-        <remap from="scan"                      to="scan_multi"/>
+        <remap from="scan"                      to="scanff"/>
         <param name="laser_max_range"           value="16.1"/>
         <param name="laser_max_beams"           value="360"/>
         <param name="laser_z_hit"               value="0.5"/>
