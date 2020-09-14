@@ -1,4 +1,5 @@
 <launch>
+    <!--
     <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
 	<param name="destination_frame" value="laser_merged" />
         <param name="scan_destination_topic" value="/scan_multi" />
@@ -11,5 +12,6 @@
         <param name="angle_increment" value="0.0087" />
         <param name="scan_time" value="0.094"/>
     </node>
+    -->
 </launch>
 
