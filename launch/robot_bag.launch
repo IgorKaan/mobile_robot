@@ -1,5 +1,6 @@
 <launch>
-    <include file="$(find mobile_robot_comms)/launch/laser_merger.launch" />
+    <node pkg="mobile_robot_comms" type="static_tf_publisher_node" name="static_tf_publisher">
+    </node>
 
     <node name="map_server" pkg="map_server" type="map_server" args="$(find mobile_robot_comms)/maps/spiiras_213.yaml" />
 

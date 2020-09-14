@@ -12,18 +12,30 @@ int main(int argc, char** argv)
 
     tf::TransformBroadcaster broadcaster;
 
-    constexpr float lidar_front_x = 0.2496f;
-    constexpr float lidar_front_y = 0.2510f;
+    constexpr float lidar_front_x = 0.2498f;
+    constexpr float lidar_front_y = 0.2498f;
     constexpr float lidar_front_z = 0.3305f;
+    /*
+    constexpr float lidar_front_x = 0.2525;
+    constexpr float lidar_front_y = 0.3025;
+    constexpr float lidar_front_z = 0.3305f;
+    */
     tf::Quaternion lidar_front_quat;
-    //lidar_front_quat.setRPY(0.0, 0.0, 0.0);
-    lidar_front_quat.setRPY(0.0, 0.0, -M_PI);
+    lidar_front_quat.setRPY(0.0, 0.0, M_PI+M_PI/4);
 
-    constexpr float lidar_rear_x = -0.2496f;
-    constexpr float lidar_rear_y = -0.2510f;
+    constexpr float lidar_rear_x = -0.2498f;
+    constexpr float lidar_rear_y = -0.2498f;
     constexpr float lidar_rear_z = 0.3305f;
+    /*
+    constexpr float lidar_rear_x = -0.2225;
+    constexpr float lidar_rear_y = -0.3025;
+    constexpr float lidar_rear_z = 0.3305f;
+    */
     tf::Quaternion lidar_rear_quat;
-    lidar_rear_quat.setRPY(0.0, 0.0, 0.0);
+    lidar_rear_quat.setRPY(0.0, 0.0, M_PI/4);
+
+    tf::Quaternion lidar_merged_quat;
+    lidar_merged_quat.setRPY(0.0, 0.0, 0.0);
 
     /*
      * FRONT LEFT
@@ -99,9 +111,10 @@ int main(int argc, char** argv)
                         ros::Time::now(), "base_link", "laser_rear"));
         broadcaster.sendTransform(
                 tf::StampedTransform(
-                        tf::Transform(lidar_rear_quat, tf::Vector3(0.0, 0.0, lidar_front_z)),
+                        tf::Transform(lidar_merged_quat, tf::Vector3(0.0, 0.0, lidar_front_z)),
                         ros::Time::now(), "base_link", "laser_merged"));
 
+	/*
         broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_fl_0_quat, sensor_fl_0),
                                                        ros::Time::now(), "base_link", "sensor_frame_fl_0"));
         broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_fl_1_quat, sensor_fl_1),
@@ -129,7 +142,7 @@ int main(int argc, char** argv)
                                                        ros::Time::now(), "base_link", "sensor_frame_rr_1"));
         broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_rr_2_quat, sensor_rr_2),
                                                        ros::Time::now(), "base_link", "sensor_frame_rr_2"));
-
+	*/
         r.sleep();
     }
 

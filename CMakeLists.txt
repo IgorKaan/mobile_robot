@@ -40,13 +40,14 @@ set(LIB_SRC
         src/odometry_publisher.cpp
         include/state_estimation/imu_odom_ekf.h
         src/state_estimation/imu_odom_ekf.cpp
-        src/
         include/imu.h
         src/imu.cpp
         include/madgwick_filter.h
         src/madgwick_filter.cpp
         include/madgwick_filter_library.h
-        src/madgwick_filter_library.cpp)
+        src/madgwick_filter_library.cpp
+        include/kinematics/omniwheel_base.h
+        src/kinematics/omniwheel_base.cpp)
 
 
 set(LIB_LINK_LIBRARIES

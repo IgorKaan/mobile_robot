@@ -1,31 +1,18 @@
-obstacle_range: 16.0
-raytrace_range: 16.0
+plugins:
+        - {name: static_map, type: "costmap_2d::StaticLayer"}
+        - {name: obstacles, type: "costmap_2d::VoxelLayer"}
+        - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+          
+obstacle_range: 16.1
+raytrace_range: 16.1
 
-robot_radius: 0.25
+robot_radius: 0.45
 
-inflation_radius: 0.24
-cost_scaling_factor: 0.32
+inflation_radius: 0.5
+cost_scaling_factor: 1.5
 
 map_type: costmap
-observation_sources: scan
-scan: {sensor_frame: laser_merged, data_type: LaserScan, topic: scan_multi, marking: true, clearing: true}
-
-ir_range_sensors:
-  topics: [
-    "sensor_fl_0",
-    "sensor_fl_1",
-    "sensor_fl_2",
-    "sensor_fr_0",
-    "sensor_fr_1",
-    "sensor_fr_2",
-    "sensor_rl_0",
-    "sensor_rl_1",
-    "sensor_rl_2",
-    "sensor_rr_0",
-    "sensor_rr_1",
-    "sensor_rr_2",
-  ]
-  clear_on_max_reading: true
-plugins:
-  - {name: ir_range_sensors, type: "range_sensor_layer::RangeSensorLayer"}
+obstacles:
+        observation_sources: scan
+        scan: {sensor_frame: laser_merged, data_type: LaserScan, topic: scan_multi, marking: true, clearing: true}
 

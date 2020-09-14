@@ -1,34 +1,59 @@
 <launch>
-    <include file="$(find mobile_robot_comms)/launch/robot_base.launch" />
+    <!--
+    <node name="laser_filter_front" pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen">
+        <rosparam file="$(find mobile_robot_comms)/param/laser_front_filter_config.yaml" command="load" />
+        <remap from="scan" to="scan_front" />
+        <remap from="scan_filtered" to="scanff" />
+    </node>
+
+    <node name="laser_filter_rear" pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen">
+        <rosparam file="$(find mobile_robot_comms)/param/laser_rear_filter_config.yaml" command="load" />
+        <remap from="scan" to="scan_rear" />
+        <remap from="scan_filtered" to="scanrf" />
+    </node>
+    -->
+
+    <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
+	<param name="destination_frame" value="laser_merged" />
+        <param name="scan_destination_topic" value="/scan_multi" />
+        <param name="laserscan_topics" value="/scanrf /scanff"/>
+
+	<param name="angle_min" value="-3.12413" />
+	<param name="angle_max" value="3.14159" />
+        <param name="range_min" value="0.1" />
+        <param name="range_max" value="40.0" />
+        <param name="angle_increment" value="0.0087" />
+        <param name="scan_time" value="0.094"/>
+    </node>
 
     <node pkg="gmapping" type="slam_gmapping" name="robot_slam_gmapping" output="screen">
-	<remap from="scan" to="scan_filtered" />
+	<remap from="scan" to="scan_multi" />
         <param name="base_frame" value="base_link"/>
-        <param name="odom_frame" value="odom"/>
-        <param name="map_update_interval" value="0.5"/>
-        <param name="maxUrange" value="16.1"/>
+        <param name="odom_frame" value="odom_combined"/>
+        <param name="map_update_interval" value="1"/>
+        <param name="maxUrange" value="16.0"/>
         <param name="sigma" value="0.05"/>
         <param name="kernelSize" value="1"/>
-        <param name="lstep" value="0.05"/>
-        <param name="astep" value="0.05"/>
+        <param name="lstep" value="0.01"/>
+        <param name="astep" value="0.01"/>
         <param name="iterations" value="5"/>
         <param name="ogain" value="3.0"/>
         <param name="lskip" value="0"/>
-        <param name="lsigma" value="0.075"/>
-        <param name="minimumScore" value="50"/>
-        <param name="srr" value="0.005"/>
-        <param name="srt" value="0.1"/>
-        <param name="str" value="0.1"/>
-        <param name="stt" value="0.2"/>
-        <param name="linearUpdate" value="0.5"/>
-        <param name="angularUpdate" value="0.05"/>
-        <param name="temporalUpdate" value="0.5"/>
+        <param name="lsigma" value="0.075" />
+        <param name="minimumScore" value="400"/>
+        <param name="srr" value="0.15"/>
+        <param name="srt" value="0.3"/>
+        <param name="str" value="0.15"/>
+        <param name="stt" value="0.3"/>
+        <param name="linearUpdate" value="0.1"/>
+        <param name="angularUpdate" value="0.1"/>
+        <param name="temporalUpdate" value="0"/>
         <param name="resampleThreshold" value="0.5"/>
-        <param name="particles" value="64"/>
-        <param name="xmin" value="-50.0"/>
-        <param name="ymin" value="-50.0"/>
-        <param name="xmax" value="50.0"/>
-        <param name="ymax" value="50.0"/>
+        <param name="particles" value="8"/>
+        <param name="xmin" value="-20.0"/>
+        <param name="ymin" value="-20"/>
+        <param name="xmax" value="20.0"/>
+        <param name="ymax" value="20.0"/>
         <param name="delta" value="0.05"/>
         <param name="llsamplerange" value="0.01"/>
         <param name="llsamplestep" value="0.01"/>
