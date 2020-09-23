@@ -9,9 +9,9 @@
         <remap from="imu/data_raw" to="imu_raw_corrected" />
         <remap from="imu/data" to="imu_data" />
         <param name="use_mag" value="false" />
-        <param name="gain" value="0.15" />
-	<param name="zeta" value="0.01" />
-        <param name="orientation_stddev" value="0.0081" />
+        <param name="gain" value="0.05" />
+	<param name="zeta" value="0.001" />
+        <param name="orientation_stddev" value="0.001" />
         <param name="publish_tf" value="false" />
     </node>
 </launch>

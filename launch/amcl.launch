@@ -1,20 +1,20 @@
 <launch>
     <include file="$(find mobile_robot_comms)/launch/laser_merger.launch" />
 
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find mobile_robot_comms)/maps/spiiras_213_2.yaml" />
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find mobile_robot_comms)/maps/spiiras_gym.yaml" />
 
     <node pkg="amcl" type="amcl" name="amcl" output="screen">
         <param name="use_map_topic" value="true" />
-        <param name="min_particles" value="2000"/>
-        <param name="max_particles" value="10000"/>
+        <param name="min_particles" value="1000"/>
+        <param name="max_particles" value="6000"/>
         <param name="kld_err" value="0.02"/>
 	<param name="kld_z" value="0.98" />
-        <param name="update_min_d" value="0.1"/>
+        <param name="update_min_d" value="0.05"/>
         <param name="update_min_a" value="0.1"/>
         <param name="resample_interval" value="1"/>
         <param name="transform_tolerance" value="0.5"/>
-        <param name="recovery_alpha_slow" value="0.0"/>
-        <param name="recovery_alpha_fast" value="0.0"/>
+        <param name="recovery_alpha_slow" value="0.3"/>
+        <param name="recovery_alpha_fast" value="0.3"/>
         <param name="initial_pose_x" value="0.0"/>
         <param name="initial_pose_y" value="0.0"/>
         <param name="initial_pose_a" value="0.0"/>
@@ -22,7 +22,7 @@
 
         <remap from="scan"                      to="scanff"/>
         <param name="laser_max_range"           value="16.1"/>
-        <param name="laser_max_beams"           value="360"/>
+        <param name="laser_max_beams"           value="180"/>
         <param name="laser_z_hit"               value="0.5"/>
         <param name="laser_z_short"             value="0.05"/>
         <param name="laser_z_max"               value="0.05"/>
@@ -33,11 +33,11 @@
         <param name="laser_model_type"          value="likelihood_field"/>
 
         <param name="odom_model_type"           value="omni-corrected"/>
-        <param name="odom_alpha1"               value="0.075"/>
-        <param name="odom_alpha2"               value="0.025"/>
+        <param name="odom_alpha1"               value="0.001"/>
+        <param name="odom_alpha2"               value="0.05"/>
         <param name="odom_alpha3"               value="0.05"/>
-        <param name="odom_alpha4"               value="0.02"/>
-        <param name="odom_alpha5"               value="0.015"/>
+        <param name="odom_alpha4"               value="0.001"/>
+        <param name="odom_alpha5"               value="0.05"/>
         <param name="odom_frame_id"             value="odom_combined"/>
         <param name="base_frame_id"             value="base_link"/>
     </node>
