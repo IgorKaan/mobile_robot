@@ -55,9 +55,9 @@ public:
         imu_msg.orientation_covariance.elems[0] = -1;
 
         imu_msg.angular_velocity = m_gyro_msg;
-        imu_msg.angular_velocity_covariance.elems[0] = 0.0005;
-        imu_msg.angular_velocity_covariance.elems[4] = 0.0005;
-        imu_msg.angular_velocity_covariance.elems[8] = 0.0005;
+        imu_msg.angular_velocity_covariance.elems[0] = 0.0001;
+        imu_msg.angular_velocity_covariance.elems[4] = 0.0001;
+        imu_msg.angular_velocity_covariance.elems[8] = 0.0001;
 
         imu_msg.linear_acceleration = m_accel_msg;
         imu_msg.linear_acceleration_covariance.elems[0] = 0.0025;

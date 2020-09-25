@@ -2,8 +2,30 @@ scan_filter_chain:
 - name: range_cutoff_front
   type: laser_filters/LaserScanAngularBoundsFilterInPlace
   params:
-    lower_angle: -1.5708
-    upper_angle: 1.5708
+    lower_angle: 1.5708
+    upper_angle: 4.7124
+- name: laser_median_filter
+  type: laser_filters/LaserArrayFilter
+  params:
+    range_filter_chain:
+      - name: median
+        type: filters/MultiChannelMedianFilterFloat
+        params:
+          number_of_observations: 3
+          unused: 6 
+    intensity_filter_chain:
+      - name: median
+        type: filters/MultiChannelMedianFilterFloat
+        params:
+          number_of_observations: 3
+          unused: 6
+- name: shadows
+  type: laser_filters/ScanShadowsFilter
+  params:
+    min_angle: 5 
+    max_angle: 185
+    neighbors: 10
+    window: 1
 
 
 

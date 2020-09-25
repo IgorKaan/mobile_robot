@@ -46,8 +46,8 @@
     -->
 
     <node pkg="mobile_robot_comms" type="base_controller_node" name="base_controller">
-        <param name="max_linear_velocity" value="0.5" />
-        <param name="max_angular_velocity" value="0.6" />
+        <param name="max_linear_velocity" value="8.0" />
+        <param name="max_angular_velocity" value="1.0" />
     </node>
 
     <node pkg="mobile_robot_comms" type="odometry_publisher_node" name="odometry_publisher"> 

@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     constexpr float lidar_front_z = 0.3305f;
     tf::Quaternion lidar_front_quat;
     //lidar_front_quat.setRPY(0.0, 0.0, M_PI+M_PI/4);
-    lidar_front_quat.setRPY(0.0, 0.0, M_PI);
+    lidar_front_quat.setRPY(0.0, 0.0, 0.0);
 
     /*
     constexpr float lidar_rear_x = -0.2498f;
