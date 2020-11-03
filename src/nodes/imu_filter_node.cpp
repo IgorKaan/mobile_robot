@@ -16,13 +16,13 @@ public:
         m_gyro_sub = m_nh.subscribe<geometry_msgs::Vector3>(gyro_topic, 32, &imu_filter_node::gyro_callback, this);
         m_accel_sub = m_nh.subscribe<geometry_msgs::Vector3>(accel_topic, 32, &imu_filter_node::accel_callback, this);
 
-	m_gyro_msg.x = 0.0f;
-	m_gyro_msg.y = 0.0f;
-	m_gyro_msg.z = 0.0f;
+        m_gyro_msg.x = 0.0f;
+        m_gyro_msg.y = 0.0f;
+        m_gyro_msg.z = 0.0f;
 
-	m_accel_msg.x = 0.0f;
-	m_accel_msg.y = 0.0f;
-	m_accel_msg.z = 0.0f;
+        m_accel_msg.x = 0.0f;
+        m_accel_msg.y = 0.0f;
+        m_accel_msg.z = 0.0f;
     }
 
     void gyro_callback(const geometry_msgs::Vector3 gyro_msg) {
@@ -48,10 +48,10 @@ public:
         imu_msg.header.frame_id = "base_link";
         imu_msg.header.stamp = ros::Time::now();
 
-	imu_msg.orientation.x = 0.0;
-	imu_msg.orientation.y = 0.0;
-	imu_msg.orientation.z = 0.0;
-	imu_msg.orientation.w = 1.0;
+        imu_msg.orientation.x = 0.0;
+        imu_msg.orientation.y = 0.0;
+        imu_msg.orientation.z = 0.0;
+        imu_msg.orientation.w = 1.0;
         imu_msg.orientation_covariance.elems[0] = -1;
 
         imu_msg.angular_velocity = m_gyro_msg;

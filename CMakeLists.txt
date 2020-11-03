@@ -38,14 +38,6 @@ set(LIB_SRC
         src/base_controller.cpp
         include/odometry_publisher.h
         src/odometry_publisher.cpp
-        include/state_estimation/imu_odom_ekf.h
-        src/state_estimation/imu_odom_ekf.cpp
-        include/imu.h
-        src/imu.cpp
-        include/madgwick_filter.h
-        src/madgwick_filter.cpp
-        include/madgwick_filter_library.h
-        src/madgwick_filter_library.cpp
         include/kinematics/omniwheel_base.h
         src/kinematics/omniwheel_base.cpp)
 
@@ -56,9 +48,6 @@ set(LIB_LINK_LIBRARIES
 
 add_library(mob_comms ${LIB_SRC})
 target_link_libraries(mob_comms ${LIB_LINK_LIBRARIES})
-
-add_executable(main src/main.cpp)
-target_link_libraries(main mob_comms)
 
 if (${roscpp_FOUND})
     message(STATUS "ROS found")

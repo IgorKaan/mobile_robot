@@ -1,6 +1,5 @@
 #include <ros/ros.h>
 
-#include "kinematics/differential_drive.h"
 #include "odometry_publisher.h"
 
 int main(int argc, char** argv)
