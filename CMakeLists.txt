@@ -6,7 +6,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
     add_definitions(-DDEBUG)
 endif ()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 find_package(Threads REQUIRED)
 find_package(Eigen3 REQUIRED)
@@ -39,7 +39,9 @@ set(LIB_SRC
         include/odometry_publisher.h
         src/odometry_publisher.cpp
         include/kinematics/omniwheel_base.h
-        src/kinematics/omniwheel_base.cpp)
+        src/kinematics/omniwheel_base.cpp
+        include/sonar_publisher.h
+        src/sonar_publisher.cpp)
 
 
 set(LIB_LINK_LIBRARIES

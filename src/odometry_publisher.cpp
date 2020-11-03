@@ -25,7 +25,7 @@ odometry_publisher::odometry_publisher(std::string rpm_topic, std::string odom_t
     for (int wid = 0; wid < WHEEL_COUNT; wid++) {
         m_wheel_velocity[wid] = 0.0f;
         m_last_wheel_time[wid] = ros::Time::now();
-	m_old_wheel_rpm[wid] = 0;
+        m_old_wheel_rpm[wid] = 0;
     }
 }
 
