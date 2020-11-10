@@ -11,7 +11,7 @@
         <param name="use_mag" value="false" />
         <param name="gain" value="0.015" />
 	<param name="zeta" value="0.001" />
-        <param name="orientation_stddev" value="0.09" />
+        <param name="orientation_stddev" value="0.3" />
         <param name="publish_tf" value="false" />
     </node>
 </launch>

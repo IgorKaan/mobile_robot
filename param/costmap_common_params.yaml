@@ -1,18 +1,26 @@
-plugins:
-        - {name: static_map, type: "costmap_2d::StaticLayer"}
-        - {name: obstacles, type: "costmap_2d::VoxelLayer"}
-        - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
-          
 obstacle_range: 10.0
 raytrace_range: 10.0
 
 robot_radius: 0.45
 
-inflation_radius: 2.0
-cost_scaling_factor: 5.0
+inflation_radius: 1.0
+cost_scaling_factor: 2.0
 
 map_type: costmap
 obstacles:
         observation_sources: scan
         scan: {sensor_frame: laser_front, data_type: LaserScan, topic: scanff, marking: true, clearing: true}
 
+sonar: 
+        topics: ["/sonar_1","/sonar_2","/sonar_3","/sonar_4","/sonar_5","/sonar_6"]
+        clear_threshold: 0.2
+        mark_threshold: 0.8
+        clear_on_max_reading: true
+        no_readings_timeout: 2.0
+
+plugins:
+        - {name: static_map, type: "costmap_2d::StaticLayer"}
+        - {name: obstacles, type: "costmap_2d::VoxelLayer"}
+        - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+        - {name: sonar, type: "range_sensor_layer::RangeSensorLayer"}
+          

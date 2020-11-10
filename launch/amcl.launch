@@ -1,7 +1,7 @@
 <launch>
     <include file="$(find mobile_robot_comms)/launch/laser_merger.launch" />
 
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find mobile_robot_comms)/maps/spiiras_gym.yaml" />
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find mobile_robot_comms)/maps/spiiras_213.yaml" />
 
     <node pkg="amcl" type="amcl" name="amcl" output="screen">
         <param name="use_map_topic" value="true" />

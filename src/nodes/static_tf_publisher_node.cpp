@@ -37,67 +37,38 @@ int main(int argc, char** argv)
     */
 
     /*
-     * FRONT LEFT
+     * LEFT
      */
-    const tf::Vector3 sensor_fl_0(0.2307, 0.0638, 0.0f);
+    const tf::Vector3 sensor_fl_0(0, 0.3, lidar_front_z);
     tf::Quaternion sensor_fl_0_quat;
-    const float sensor_fl0_angle = 0.0;
-    sensor_fl_0_quat.setRPY(0.0, 0.0, sensor_fl0_angle);
+    sensor_fl_0_quat.setRPY(0.0, 0.0, M_PI/2.0f);
 
-    const tf::Vector3 sensor_fl_1(0.2175, 0.1047, 0.0f);
+    const tf::Vector3 sensor_fl_1(-0.2, 0.301, lidar_front_z);
     tf::Quaternion sensor_fl_1_quat;
-    const float sensor_fl1_angle = std::atan2(sensor_fl_1.y(), sensor_fl_1.x());
-    sensor_fl_1_quat.setRPY(0.0, 0.0, sensor_fl1_angle);
+    sensor_fl_1_quat.setRPY(0.0, 0.0, M_PI/2.0f);
 
-    const tf::Vector3 sensor_fl_2(0.1987, 0.1347, 0.0f);
-    tf::Quaternion sensor_fl_2_quat;
-    const float sensor_fl2_angle = std::atan2(sensor_fl_2.y(), sensor_fl_2.x());
-    sensor_fl_2_quat.setRPY(0.0, 0.0, sensor_fl2_angle);
 
     /*
-     * FRONT RIGHT
+     * RIGHT
      */
     const tf::Vector3 sensor_fr_0(sensor_fl_0.x(), -sensor_fl_0.y(), sensor_fl_0.z());
     tf::Quaternion sensor_fr_0_quat;
-    sensor_fr_0_quat.setRPY(0.0, 0.0, -sensor_fl0_angle);
+    sensor_fr_0_quat.setRPY(0.0, 0.0, -M_PI/2.0f);
 
     const tf::Vector3 sensor_fr_1(sensor_fl_1.x(), -sensor_fl_1.y(), sensor_fl_1.z());
     tf::Quaternion sensor_fr_1_quat;
-    sensor_fr_1_quat.setRPY(0.0, 0.0, -sensor_fl1_angle);
-
-    const tf::Vector3 sensor_fr_2(sensor_fl_2.x(), -sensor_fl_2.y(), sensor_fl_2.z());
-    tf::Quaternion sensor_fr_2_quat;
-    sensor_fr_2_quat.setRPY(0.0, 0.0, -sensor_fl2_angle);
+    sensor_fr_1_quat.setRPY(0.0, 0.0, -M_PI/2.0f);
 
     /*
-     * REAR LEFT
+     * REAR 
      */
-    const tf::Vector3 sensor_rl_0(-sensor_fl_0.x(), sensor_fl_0.y(), sensor_fl_0.z());
+    const tf::Vector3 sensor_rl_0(-0.3, 0.2, lidar_front_z);
     tf::Quaternion sensor_rl_0_quat;
-    sensor_rl_0_quat.setRPY(0.0, 0.0, M_PI-sensor_fl0_angle);
+    sensor_rl_0_quat.setRPY(0.0, 0.0, M_PI);
 
-    const tf::Vector3 sensor_rl_1(-sensor_fl_1.x(), sensor_fl_1.y(), sensor_fl_1.z());
+    const tf::Vector3 sensor_rl_1(sensor_rl_0.x(), -sensor_rl_0.y(), sensor_rl_0.z());
     tf::Quaternion sensor_rl_1_quat;
-    sensor_rl_1_quat.setRPY(0.0, 0.0, M_PI-+sensor_fl1_angle);
-
-    const tf::Vector3 sensor_rl_2(-sensor_fl_2.x(), sensor_fl_2.y(), sensor_fl_2.z());
-    tf::Quaternion sensor_rl_2_quat;
-    sensor_rl_2_quat.setRPY(0.0, 0.0, M_PI-sensor_fl2_angle);
-
-    /*
-     * REAR RIGHT
-     */
-    const tf::Vector3 sensor_rr_0(-sensor_fl_0.x(), -sensor_fl_0.y(), sensor_fl_0.z());
-    tf::Quaternion sensor_rr_0_quat;
-    sensor_rr_0_quat.setRPY(0.0, 0.0, M_PI+sensor_fl0_angle);
-
-    const tf::Vector3 sensor_rr_1(-sensor_fl_1.x(), -sensor_fl_1.y(), sensor_fl_1.z());
-    tf::Quaternion sensor_rr_1_quat;
-    sensor_rr_1_quat.setRPY(0.0, 0.0, M_PI+sensor_fl1_angle);
-
-    const tf::Vector3 sensor_rr_2(-sensor_fl_2.x(), -sensor_fl_2.y(), sensor_fl_2.z());
-    tf::Quaternion sensor_rr_2_quat;
-    sensor_rr_2_quat.setRPY(0.0, 0.0, M_PI+sensor_fl2_angle);
+    sensor_rl_1_quat.setRPY(0.0, 0.0, M_PI);
 
     while (n.ok()) {
         broadcaster.sendTransform(
@@ -115,35 +86,21 @@ int main(int argc, char** argv)
                         ros::Time::now(), "base_link", "laser_merged"));
 	*/
 
-	/*
         broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_fl_0_quat, sensor_fl_0),
-                                                       ros::Time::now(), "base_link", "sensor_frame_fl_0"));
+                                                       ros::Time::now(), "base_link", "sonar_frame_6"));
         broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_fl_1_quat, sensor_fl_1),
-                                                       ros::Time::now(), "base_link", "sensor_frame_fl_1"));
-        broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_fl_2_quat, sensor_fl_2),
-                                                       ros::Time::now(), "base_link", "sensor_frame_fl_2"));
+                                                       ros::Time::now(), "base_link", "sonar_frame_5"));
 
         broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_fr_0_quat, sensor_fr_0),
-                                                       ros::Time::now(), "base_link", "sensor_frame_fr_0"));
+                                                       ros::Time::now(), "base_link", "sonar_frame_1"));
         broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_fr_1_quat, sensor_fr_1),
-                                                       ros::Time::now(), "base_link", "sensor_frame_fr_1"));
-        broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_fr_2_quat, sensor_fr_2),
-                                                       ros::Time::now(), "base_link", "sensor_frame_fr_2"));
+                                                       ros::Time::now(), "base_link", "sonar_frame_2"));
 
         broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_rl_0_quat, sensor_rl_0),
-                                                       ros::Time::now(), "base_link", "sensor_frame_rl_0"));
+                                                       ros::Time::now(), "base_link", "sonar_frame_4"));
         broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_rl_1_quat, sensor_rl_1),
-                                                       ros::Time::now(), "base_link", "sensor_frame_rl_1"));
-        broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_rl_2_quat, sensor_rl_2),
-                                                       ros::Time::now(), "base_link", "sensor_frame_rl_2"));
+                                                       ros::Time::now(), "base_link", "sonar_frame_3"));
 
-        broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_rr_0_quat, sensor_rr_0),
-                                                       ros::Time::now(), "base_link", "sensor_frame_rr_0"));
-        broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_rr_1_quat, sensor_rr_1),
-                                                       ros::Time::now(), "base_link", "sensor_frame_rr_1"));
-        broadcaster.sendTransform(tf::StampedTransform(tf::Transform(sensor_rr_2_quat, sensor_rr_2),
-                                                       ros::Time::now(), "base_link", "sensor_frame_rr_2"));
-	*/
         r.sleep();
     }
 

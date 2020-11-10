@@ -10,28 +10,24 @@ sonar_publisher::sonar_publisher(const float sensor_fov, const float min_range, 
         SonarArrayRange rangeType;
         std::string sub_topic_str;
         int arr_sub = 0;
-        if (idx < 4) {
-            rangeType = SonarArrayRange::SONAR_0_3;
-            sub_topic_str = "/sonar_0_3";
+        if (idx < 3) {
+            rangeType = SonarArrayRange::SONAR_1_3;
+            sub_topic_str = "/sensors1_3_data";
             arr_sub = 0;
-        } else if (idx < 8) {
-            rangeType = SonarArrayRange::SONAR_4_7;
-            sub_topic_str = "/sonar_4_7";
+        } else if (idx < 5) {
+            rangeType = SonarArrayRange::SONAR_4_6;
+            sub_topic_str = "/sensors4_6_data";
             arr_sub = 1;
-        } else if (idx < 12) {
-            rangeType = SonarArrayRange::SONAR_8_11;
-            sub_topic_str = "/sonar_8_11";
+        } else if (idx < 9) {
+            rangeType = SonarArrayRange::SONAR_7_9;
+            sub_topic_str = "/sensors7_8_data";
             arr_sub = 2;
-        } else if (idx < 16) {
-            rangeType = SonarArrayRange::SONAR_12_15;
-            sub_topic_str = "/sonar_12_15";
-            arr_sub = 3;
         }
 
-        boost::function<void(const std_msgs::UInt8MultiArray&)> fn = boost::bind(&sonar_publisher::sonar_array_cb, this, _1, rangeType);
+        boost::function<void(const geometry_msgs::Vector3&)> fn = boost::bind(&sonar_publisher::sonar_vector_cb, this, _1, rangeType);
 
         std::stringstream ss;
-        ss << "/sonar_" << idx;
+        ss << "/sonar_" << idx + 1;
         std::string pub_topic_str(ss.str());
 
         m_array_subs[arr_sub] = m_nh.subscribe<std_msgs::UInt8MultiArray>(sub_topic_str, 10, fn);
@@ -49,12 +45,19 @@ void sonar_publisher::update()
 
     for (int idx = 0; idx < NUM_SONARS; idx++) {
         sensor_msgs::Range range_msg;
+
+	std::stringstream ss;
+	ss << "sonar_frame_" << idx + 1;
+	range_msg.header.frame_id = ss.str();
+
         range_msg.radiation_type = sensor_msgs::Range::ULTRASOUND;
         range_msg.field_of_view = m_sensor_fov;
         range_msg.min_range = m_min_range;
         range_msg.max_range = m_max_range;
+
         if (cb_dt > 0.5f) {
-            range_msg.range = m_max_range;
+	    // handle delayed cb (maybe)
+            range_msg.range = m_sonar_data[idx];
         } else {
             range_msg.range = m_sonar_data[idx];
         }
@@ -67,17 +70,30 @@ void sonar_publisher::sonar_array_cb(const std_msgs::UInt8MultiArray& sonars,
                                      const sonar_publisher::SonarArrayRange range)
 {
     switch (range) {
-        case SonarArrayRange::SONAR_0_3:
-            publish_array_range(sonars, 0, 3);
+        case SonarArrayRange::SONAR_1_3:
+            publish_array_range(sonars, 0, 2);
             break;
-        case SonarArrayRange::SONAR_4_7:
-            publish_array_range(sonars, 4, 7);
+	case SonarArrayRange::SONAR_4_6:
+            publish_array_range(sonars, 3, 5);
             break;
-        case SonarArrayRange::SONAR_8_11:
-            publish_array_range(sonars, 8, 11);
+	case SonarArrayRange::SONAR_7_9:
+            publish_array_range(sonars, 6, 8);
             break;
-        case SonarArrayRange::SONAR_12_15:
-            publish_array_range(sonars, 12, 15);
+    }
+
+    m_last_cmd_time = ros::Time::now();
+}
+
+void sonar_publisher::sonar_vector_cb(const geometry_msgs::Vector3& sonars, const SonarArrayRange range) {
+    switch (range) {
+        case SonarArrayRange::SONAR_1_3:
+            publish_vector_range(sonars, 0, 2);
+            break;
+	case SonarArrayRange::SONAR_4_6:
+            publish_vector_range(sonars, 3, 5);
+            break;
+	case SonarArrayRange::SONAR_7_9:
+            publish_vector_range(sonars, 6, 8);
             break;
     }
 
@@ -86,6 +102,13 @@ void sonar_publisher::sonar_array_cb(const std_msgs::UInt8MultiArray& sonars,
 
 void sonar_publisher::publish_array_range(const std_msgs::UInt8MultiArray &sonars, const int start_id, const int end_id) {
     for (size_t idx = start_id; idx <= end_id; idx++) {
-        m_sonar_data[idx] = sonars.data[idx-start_id];
+        m_sonar_data[idx] = sonars.data[idx-start_id] / 100.0f;
     }
 }
+
+void sonar_publisher::publish_vector_range(const geometry_msgs::Vector3& sonars, const int start_id, const int end_id) {
+	m_sonar_data[start_id] = sonars.x / 100.0f;
+	m_sonar_data[start_id+1] = sonars.y / 100.0f;
+	m_sonar_data[start_id+2] = sonars.z / 100.0f;
+}
+

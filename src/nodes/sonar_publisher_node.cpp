@@ -10,7 +10,7 @@ int main(int argc, char** argv)
     try {
         ros::init(argc, argv, "sonar_publisher_node");
 
-        sonar_publisher sonar_pub(0.1f, 0.1, 1.0f);
+        sonar_publisher sonar_pub(0.44f, 0.05f, 1.0f);
 
         ros::Rate rate(30.0f);
         while (ros::ok()) {
