@@ -2,6 +2,9 @@
     <node pkg="mobile_robot_comms" type="static_tf_publisher_node" name="static_tf_publisher">
     </node>
 
+    <node pkg="mobile_robot_comms" type="sonar_publisher_node" name="sonar_publisher">
+    </node>
+
     <node name="rplidarNode_front" pkg="rplidar_ros"  type="rplidarNode" output="screen">
 	<remap from="scan" to="scan_front" />
 	<param name="serial_port"         type="string" value="/dev/ttyUSB0"/>

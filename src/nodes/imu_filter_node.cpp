@@ -27,18 +27,14 @@ public:
 
     void gyro_callback(const geometry_msgs::Vector3 gyro_msg) {
         m_gyro_msg.x = gyro_msg.x;
-        //m_gyro_msg.y = -gyro_msg.y;
-        //m_gyro_msg.z = -gyro_msg.z;
-        m_gyro_msg.y = gyro_msg.y;
-        m_gyro_msg.z = gyro_msg.z;
+        m_gyro_msg.y = -gyro_msg.y;
+        m_gyro_msg.z = -gyro_msg.z;
     }
 
     void accel_callback(const geometry_msgs::Vector3 accel_msg) {
         m_accel_msg.x = accel_msg.x;
-        //m_accel_msg.y = -accel_msg.y;
-        //m_accel_msg.z = -accel_msg.z;
-        m_accel_msg.y = accel_msg.y;
-        m_accel_msg.z = accel_msg.z;
+        m_accel_msg.y = -accel_msg.y;
+        m_accel_msg.z = -accel_msg.z;
     }
 
     void imu_filter_update()
